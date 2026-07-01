@@ -22,16 +22,19 @@ PageManager::PageManager(WindowManager::SCREEN_SIZE_TYPE screenSize)
     : signal{}
     , screenSize(screenSize)
 {
-    changePage(*signal.next_page);
+    signal.nextPage = Page::Name::game;
+    changePage(*signal.nextPage);
+    if(!currPage)
+        throw std::runtime_error("first page is not designated");
 }
 
 void PageManager::showPage(WindowManager& windowManager)
 {
     while(auto event = windowManager.pollEvent())
     {
-        if (event->is<Event::Closed>())
+        if(event->is<Event::Closed>())
             windowManager.close();
-        windowManager.resizeWindow(*event);
+        windowManager.resizeWindow(event);
         currPage->getLetManager().actKeyboardLet(event);
     }
     windowManager.clear();
@@ -39,11 +42,11 @@ void PageManager::showPage(WindowManager& windowManager)
     windowManager.setView();
     windowManager.display();
     
-    if(signal.request_capture && *signal.request_capture)
+    if(signal.requestCapture && *signal.requestCapture)
     {
         windowManager.captureWindow();
-        signal.request_capture = false;
+        signal.requestCapture = false;
     }
-    if(signal.next_page)
-        changePage(*signal.next_page);
+    if(signal.nextPage)
+        changePage(*signal.nextPage);
 }

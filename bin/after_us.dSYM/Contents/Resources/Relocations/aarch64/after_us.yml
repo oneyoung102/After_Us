@@ -1,5 +1,5 @@
 ---
 triple:          'arm64-apple-darwin'
-binary-path:     'bin/after_us'
+binary-path:     '/Users/jangoneyoung/after_us_project/bin/after_us'
 relocations:     []
 ...

@@ -18,10 +18,6 @@ WindowManager::WindowManager(std::string&& name)
 WindowManager::SCREEN_SIZE_TYPE WindowManager::getScreenSize() {return screenSize;}
 WindowManager::SCREEN_SIZE_TYPE WindowManager:: getScreenCenter() {return screenCenter;}
 
-const sf::Event::Resized* WindowManager::getResizeEvent(const sf::Event& event)
-{
-    return event.getIf<sf::Event::Resized>();
-}
 
 sf::FloatRect WindowManager::getResizedWindow(const sf::Event::Resized* resize)
 {
@@ -93,9 +89,11 @@ std::optional<sf::Event> WindowManager::pollEvent()
     return window.pollEvent();
 }
 
-void WindowManager::resizeWindow(const sf::Event& event)
+void WindowManager::resizeWindow(const std::optional<sf::Event>& event)
 {
-    if(const auto* resized = getResizeEvent(event))
+    if(!event)
+        return;
+    if(const auto* resized = event->getIf<sf::Event::Resized>())
         view.setViewport(getResizedWindow(resized));
 }
 

@@ -20,7 +20,6 @@ class WindowManager
         sf::Texture captureTexture;
         sf::Sprite captureSprite;
 
-        const sf::Event::Resized* getResizeEvent(const sf::Event& event);
         sf::FloatRect getResizedWindow(const sf::Event::Resized* resize);
     public :
         WindowManager(std::string&& name);
@@ -43,6 +42,6 @@ class WindowManager
 
         std::optional<sf::Event> pollEvent();
 
-        void resizeWindow(const sf::Event& event);
+        void resizeWindow(const std::optional<sf::Event>& event);
         void setView();
 };

@@ -26,6 +26,7 @@
                 "src/game/letManager/letManager.cpp",
                 "src/game/pageManager/pageManager.cpp",
                 "src/game/pages/page.cpp",
+                "src/game/pages/gamePage/gamePage.cpp",
 
                 "-o",
                 "${workspaceFolder}/bin/after_us",

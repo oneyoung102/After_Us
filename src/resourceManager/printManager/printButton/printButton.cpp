@@ -37,8 +37,8 @@ PrintButton::PrintButton(sf::Sprite s, const bool& selected, tools::POSf pos, co
     sprite.setPosition(Vector2f(pos.x,pos.y));
 }
 
-bool PrintButton::alive(){return life != 0;}
-bool PrintButton::is_immortal(){return life == imageConstant::PRINT_IMMORTAL;}
+bool PrintButton::isAlive(){return life != 0;}
+bool PrintButton::isImmortal(){return life == imageConstant::PRINT_IMMORTAL;}
 
 void PrintButton::print(RenderWindow& window, const Shader& shader)
 {
@@ -47,6 +47,6 @@ void PrintButton::print(RenderWindow& window, const Shader& shader)
     else 
         window.draw(sprite);
     window.draw(text);
-    if(alive())
+    if(isAlive())
         --life;
 }

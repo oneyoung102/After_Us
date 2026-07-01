@@ -7,6 +7,6 @@
 class PageSignal
 {
     public :
-        std::optional<Page::Name> next_page;
-        std::optional<bool> request_capture;
+        std::optional<Page::Name> nextPage;
+        std::optional<bool> requestCapture;
 };

@@ -12,19 +12,19 @@ PrintTextZoom::PrintTextZoom(tools::POSf pos, const string& content, const Font&
     , cycle(cycle)
     , dsize(max(1,size/imageConstant::TEXT_ZOOM_SIZE_PROP))
     , dcycle(max(1,cycle/imageConstant::TEXT_ZOOM_CYCLE_PROP))
-    , cycle_count(0)
+    , cycleCount(0)
     , size_bigger(true)
     , size(size)
 {}
 
 void PrintTextZoom::print(RenderWindow& window)
 {
-    if(++cycle_count >= cycle)
+    if(++cycleCount >= cycle)
     {
         size_bigger = !size_bigger;
-        cycle_count = 0;
+        cycleCount = 0;
     }
-    if(cycle_count%dcycle == 0)
+    if(cycleCount%dcycle == 0)
     {
         auto bounds = text.getLocalBounds();
         text.setOrigin({bounds.position.x + bounds.size.x / 2.f,bounds.position.y + bounds.size.y / 2.f});
@@ -34,6 +34,6 @@ void PrintTextZoom::print(RenderWindow& window)
             text.setCharacterSize(size-=dsize);
     }
     window.draw(text);
-    if(alive())
+    if(isAlive())
         --life;
 }
