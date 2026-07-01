@@ -9,7 +9,7 @@
                 "-g",
                 "-std=c++23",
                 "src/main/main.cpp",
-                "src/main/windowResize/windowResize.cpp",
+                "src/main/windowManager/windowManager.cpp",
                 "src/resourceManager/fileManager/fileManager.cpp",
                 "src/resourceManager/soundManager/soundManager.cpp",
                 "src/resourceManager/printManager/printManager.cpp",

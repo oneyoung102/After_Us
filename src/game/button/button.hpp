@@ -14,7 +14,7 @@ class Button
 {
     private :
         bool __selected;
-        ObjectSignalReceiver<ButtonCursorSignal,FileManager&> signal_receiver;
+        ObjectSignalReceiver<ButtonCursorSignal,FileManager&> signalReceiver;
     public :
         ButtonCursor<R,C,buttonName> cursor;
         
@@ -22,26 +22,26 @@ class Button
             : cursor(std::move(allocated), cyclic)
             , __selected(false)
         {}
-        void set_executes(SoundManager& ps, LetManager& pl)
+        void setExecutes(SoundManager& ps, LetManager& pl)
         {
-            signal_receiver.addExecute(ButtonCursorSignal::cursor, [&ps](FileManager& pfs){
+            signalReceiver.addExecute(ButtonCursorSignal::cursor, [&ps](FileManager& pfs){
                 //ps.play_sound(pfs.get_buffer(fileManager::Sound::cursor));
             });
-            signal_receiver.addExecute(ButtonCursorSignal::select, [&ps,&pl,this](FileManager& pfs){
-                if(!ps.sounds_empty())
-                    ps.clear_back();
+            signalReceiver.addExecute(ButtonCursorSignal::select, [&ps,&pl,this](FileManager& pfs){
+                if(!ps.isEmpty())
+                    ps.clearBack();
                 //ps.play_sound(pfs.get_buffer(fileManager::Sound::select));
                 pl.clear();
                 __selected = true;
             });
         }
-        void add_executes(ButtonCursorSignal signal, std::function<void(FileManager&)>&& func)
+        void addExecutes(ButtonCursorSignal signal, std::function<void(FileManager&)>&& func)
         {
-            signal_receiver.addExecute(signal, std::move(func));
+            signalReceiver.addExecute(signal, std::move(func));
         }
-        void receive_signals(FileManager& pfs)
+        void receiveSignals(FileManager& pfs)
         {
-            signal_receiver.execute(cursor, pfs);
+            signalReceiver.execute(cursor, pfs);
         }
         
         bool selected()

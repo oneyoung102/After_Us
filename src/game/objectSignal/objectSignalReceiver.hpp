@@ -5,6 +5,11 @@
 #include <array>
 #include <functional>
 
+template<class T, class P = void>
+class has_COUNT : public std::false_type {};
+template<class T>
+class has_COUNT<T, std::void_t<decltype(T::COUNT)>> : public std::true_type {};
+
 template<class T, class ... ARGS>
 class ObjectSignalReceiver // FUNC : function, T : enum (last element : COUNT)
 {
@@ -12,7 +17,10 @@ class ObjectSignalReceiver // FUNC : function, T : enum (last element : COUNT)
         using FUNC = std::function<void(ARGS ...)>;
         std::array<FUNC, tools::CASTs(T::COUNT)> executes;
     public :
-        ObjectSignalReceiver(){}
+        ObjectSignalReceiver()
+        {
+            static_assert(has_COUNT<T>::value, "enum of objectSignalReceiver must have COUNT value.");
+        }
 
         void execute(ObjectSignal<T>& object_signal, ARGS ... args)
         {

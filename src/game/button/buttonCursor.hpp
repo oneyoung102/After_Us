@@ -32,7 +32,7 @@ class ButtonCursor : public ObjectSignal<ButtonCursorSignal> // buttonName에 NO
 
         const bool cyclic;
 
-        void move_cursor(const tools::POSi& amount)
+        void moveCursor(const tools::POSi& amount)
         {
             selected[cursor.r][cursor.c].second = false;
             cursor += amount;
@@ -40,11 +40,11 @@ class ButtonCursor : public ObjectSignal<ButtonCursorSignal> // buttonName에 NO
 
             std::array<std::array<bool,C>,R> visited{{false}};
             std::queue<tools::POSi> coords;
-            auto temp_cursor = cursor;
-            while(tools::POSi() <= temp_cursor && temp_cursor < tools::POSi(C,R))
+            auto tempCursor = cursor;
+            while(tools::POSi() <= tempCursor && tempCursor < tools::POSi(C,R))
             {
-                coords.push(temp_cursor);
-                temp_cursor += amount;
+                coords.push(tempCursor);
+                tempCursor += amount;
             }
             while(!coords.empty())
             {
@@ -75,48 +75,48 @@ class ButtonCursor : public ObjectSignal<ButtonCursorSignal> // buttonName에 NO
             if(allocated.empty() || allocated.size() != R || allocated[0].size() != C)
                 throw std::runtime_error("Button allocated vector is not matched with buttonCursor template variable");
             
-            bool init_found = false;
+            bool initFound = false;
             for(size_t i = 0 ; i < R ; ++i)
                 for(size_t j = 0 ; j < C ; ++j)
-                    if(!init_found && allocated[i][j] != buttonName::NONE)
+                    if(!initFound && allocated[i][j] != buttonName::NONE)
                     {
                         selected[i][j] = std::make_pair(allocated[i][j],true);
                         cursor = tools::POSi(j,i);
-                        init_found = true;
+                        initFound = true;
                     }
                     else
                         selected[i][j] = std::make_pair(allocated[i][j],false);   
-            if(!init_found)   
+            if(!initFound)   
                 throw std::runtime_error("Button allocated vector has no button.(only has NONE)");
         }
-        void let_select(){signal(ButtonCursorSignal::select);}
-        void let_choose_left() 
+        void letSelect(){signal(ButtonCursorSignal::select);}
+        void letChooseLeft() 
         {
             if(cursor.c > 0 || cyclic && cursor.c == 0)
-                move_cursor(tools::DIR[tools::LEFT]);
+                moveCursor(tools::DIR[tools::LEFT]);
         }
-        void let_choose_right()
+        void letChooseRight()
         {
             if(cursor.c < C-1 || cyclic && cursor.c == C-1)
-                move_cursor(tools::DIR[tools::RIGHT]);
+                moveCursor(tools::DIR[tools::RIGHT]);
         }
-        void let_choose_up()
+        void letChooseUp()
         {
             if(cursor.r > 0 || cyclic && cursor.r == 0)
-                move_cursor(tools::DIR[tools::UP]);
+                moveCursor(tools::DIR[tools::UP]);
         }
-        void let_choose_down()
+        void letChooseDown()
         {
             if(cursor.r < R-1 || cyclic && cursor.r == R-1)
-                move_cursor(tools::DIR[tools::DOWN]);
+                moveCursor(tools::DIR[tools::DOWN]);
         }
-        const bool& get_select_status(buttonName type) const
+        const bool& getSelectStatus(buttonName type) const
         {
             for(size_t i = 0 ; i < R ; ++i)
                 for(size_t j = 0 ; j < C ; ++j)
                     if(selected[i][j].first == type)
                         return selected[i][j].second;
-            throw std::runtime_error("factor of function get_select_status is not valid.");
+            throw std::runtime_error("factor of function getSelectStatus is not valid.");
         }
-        buttonName get_selected_button(){return selected[cursor.r][cursor.c].first;}
+        buttonName getSelectedButton(){return selected[cursor.r][cursor.c].first;}
 };

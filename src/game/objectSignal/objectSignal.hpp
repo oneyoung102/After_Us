@@ -4,10 +4,6 @@
 #include <stdexcept>
 #include <type_traits>
 
-template<class T, class P = void>
-class has_COUNT : public std::false_type {};
-template<class T>
-class has_COUNT<T, std::void_t<decltype(T::COUNT)>> : public std::true_type {};
 
 template<class T>
 class ObjectSignal //T : enum (last element : COUNT)
@@ -18,7 +14,6 @@ class ObjectSignal //T : enum (last element : COUNT)
         ObjectSignal()
         {
             static_assert(std::is_enum<T>(),"template type of puyoObjectSignal is not as enum");
-            static_assert(has_COUNT<T>::value, "enum of puyoObjectSignal must have COUNT value.");
         }
 
         void signal(T signal){signals.push(signal);}

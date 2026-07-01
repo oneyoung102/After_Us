@@ -3,6 +3,7 @@
 #include <SFML/Graphics.hpp>
 #include "game/pageManager/pageSignal.hpp"
 #include "game/pages/page.hpp"
+#include "main/windowManager/windowManager.hpp"
 #include "resourceManager/fileManager/fileManager.hpp"
 
 #include <memory>
@@ -11,17 +12,15 @@
 class PageManager
 {
     private : 
-        FileManager pfs;
-        std::unique_ptr<Page> curr_page;
+        FileManager fileManager;
+        std::unique_ptr<Page> currPage;
         PageSignal signal;
 
-        sf::Texture capture_texture;
-        sf::Sprite capture_sprite;
-        void captureWindow(sf::RenderWindow& window);
+        const WindowManager::SCREEN_SIZE_TYPE screenSize;
 
-        void changePage(Page::Name p);
+        void changePage(Page::Name pageName);
     public :
-        PageManager();
-        void showPage(sf::RenderWindow& window);
+        PageManager(WindowManager::SCREEN_SIZE_TYPE screenSize);
+        void showPage(WindowManager& windowManager);
 
 };

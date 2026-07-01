@@ -10,7 +10,7 @@ class PrintTextFlash : public PrintText
 {
     private:
         const int cycle;//옵션 주기
-        int cycle_count;
+        int cycleCount;
         bool show;
     public:
         PrintTextFlash(tools::POSf pos, const std::string& content, const sf::Font& font, int size, int cycle, 

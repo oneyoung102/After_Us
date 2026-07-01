@@ -9,11 +9,11 @@
 class LetManager
 {
     private :
-        std::array<std::function<void()>, 101> key_allot;
+        std::array<std::function<void()>, 101> keyAllot;
     public :
         LetManager();
-        void act_keyboard_let(const std::optional<sf::Event>& event);
-        void allot_key(sf::Keyboard::Key key, std::function<void()>&& func);
+        void actKeyboardLet(const std::optional<sf::Event>& event);
+        void allotKey(sf::Keyboard::Key key, std::function<void()>&& func);
         void clear();
         void clear(sf::Keyboard::Key key);
 };

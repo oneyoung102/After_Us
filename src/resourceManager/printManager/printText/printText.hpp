@@ -14,7 +14,7 @@ class PrintText
         PrintText(tools::POSf pos, const std::string& content, const sf::Font& font, int size,
             sf::Color color = sf::Color::White, sf::Text::Style style = sf::Text::Style::Bold, int life = imageConstant::PRINT_IMMORTAL);
         virtual ~PrintText() = default;
-        bool alive();
-        bool is_immortal();
+        bool isAlive();
+        bool isImmortal();
         virtual void print(sf::RenderWindow& w);
 };

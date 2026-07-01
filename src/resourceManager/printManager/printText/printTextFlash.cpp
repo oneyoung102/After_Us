@@ -9,19 +9,19 @@ using namespace sf;
 PrintTextFlash::PrintTextFlash(tools::POSf pos, const string& content, const Font& font, int size, int cycle, sf::Color color, sf::Text::Style style, int life)
     : PrintText(pos,content,font,size,color,style,life)
     , cycle(cycle)
-    , cycle_count(0)
+    , cycleCount(0)
     , show(true)
 {}
 
 void PrintTextFlash::print(RenderWindow& window)
 {
-    if(++cycle_count >= cycle)
+    if(++cycleCount >= cycle)
     {
         show = !show;
-        cycle_count = 0;
+        cycleCount = 0;
     }
     if(show)
         window.draw(text);
-    if(alive())
+    if(isAlive())
         --life;
 }

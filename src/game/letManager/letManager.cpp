@@ -10,7 +10,7 @@ LetManager::LetManager()
     clear();
 }  
 
-void LetManager::act_keyboard_let(const optional<Event>& event)
+void LetManager::actKeyboardLet(const optional<Event>& event)
 {
     if(!event)
         return;
@@ -18,17 +18,17 @@ void LetManager::act_keyboard_let(const optional<Event>& event)
     {
         if(key->code == sf::Keyboard::Key::Unknown)
             return;
-        auto& func = key_allot[static_cast<size_t>(key->code)];
+        auto& func = keyAllot[static_cast<size_t>(key->code)];
         if(func)
             func();
     }
 }
-void LetManager::allot_key(Keyboard::Key key, function<void()>&& func){key_allot[static_cast<size_t>(key)] = std::move(func);}
+void LetManager::allotKey(Keyboard::Key key, function<void()>&& func){keyAllot[static_cast<size_t>(key)] = std::move(func);}
 void LetManager::clear()
 {
-    key_allot.fill(nullptr);
+    keyAllot.fill(nullptr);
 }
 void LetManager::clear(Keyboard::Key key)
 {
-    key_allot[static_cast<size_t>(key)] = nullptr;
+    keyAllot[static_cast<size_t>(key)] = nullptr;
 }

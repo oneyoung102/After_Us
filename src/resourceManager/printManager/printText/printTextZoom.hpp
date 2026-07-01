@@ -11,7 +11,7 @@ class PrintTextZoom : public PrintText
     protected:
         int size;
         const int cycle, dsize, dcycle;
-        int cycle_count;
+        int cycleCount;
         bool size_bigger;
     public:
         PrintTextZoom(tools::POSf pos, const std::string& content, const sf::Font& font, int size, int cycle,
