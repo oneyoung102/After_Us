@@ -7,18 +7,18 @@
     
 int main()
 {   
-    WindowManager windowManager("After Us");
-    PageManager pageManager(windowManager.getScreenSize());
-    while(windowManager.isOpen())
+    WindowManager window_manager("After Us");
+    PageManager page_manager(window_manager.get_screen_size());
+    while(window_manager.is_open())
     {
         try
         {
-            pageManager.showPage(windowManager);
+            page_manager.show_page(window_manager);
         }
         catch(const std::runtime_error& e)
         {
             std::cerr << e.what() << std::endl;
-            windowManager.close();
+            window_manager.close();
             break;
         }
     }

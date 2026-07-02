@@ -10,10 +10,10 @@ class PrintTextFlash : public PrintText
 {
     private:
         const int cycle;//옵션 주기
-        int cycleCount;
+        int cycle_count;
         bool show;
     public:
         PrintTextFlash(tools::POSf pos, const std::string& content, const sf::Font& font, int size, int cycle, 
-            sf::Color color = sf::Color::White, sf::Text::Style style = sf::Text::Style::Bold, int life = imageConstant::PRINT_IMMORTAL);
-        void print(sf::RenderWindow& w);
+            sf::Color color = sf::Color::White, sf::Text::Style style = sf::Text::Style::Bold, int life = image_constant::PRINT_IMMORTAL);
+        void print(sf::RenderWindow& w) override;
 };

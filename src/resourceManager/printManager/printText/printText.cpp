@@ -23,12 +23,12 @@ PrintText::PrintText(tools::POSf pos, const string& content, const Font& font, i
     text.setPosition({pos.x,pos.y});
 }
 
-bool PrintText::isAlive(){return life != 0;}
-bool PrintText::isImmortal(){return life == imageConstant::PRINT_IMMORTAL;}
+bool PrintText::is_alive(){return life != 0;}
+bool PrintText::is_immortal(){return life == image_constant::PRINT_IMMORTAL;}
 
 void PrintText::print(RenderWindow& window)
 {
     window.draw(text);
-    if(isAlive())
+    if(is_alive())
         --life;
 }

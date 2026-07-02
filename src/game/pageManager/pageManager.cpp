@@ -9,44 +9,44 @@
 using namespace std;
 using namespace sf;
 
-void PageManager::changePage(Page::Name pageName)
+void PageManager::change_page(Page::Name page_name)
 {
-    switch(pageName)
+    switch(page_name)
     {
         case Page::Name::game :
-            currPage = make_unique<GamePage>(fileManager, screenSize);
+            curr_page = make_unique<GamePage>(file_manager, screen_size);
     }
 }
 
-PageManager::PageManager(WindowManager::SCREEN_SIZE_TYPE screenSize)
+PageManager::PageManager(WindowManager::ScreenSizeType screen_size)
     : signal{}
-    , screenSize(screenSize)
+    , screen_size(screen_size)
 {
-    signal.nextPage = Page::Name::game;
-    changePage(*signal.nextPage);
-    if(!currPage)
+    signal.next_page = Page::Name::game;
+    change_page(*signal.next_page);
+    if(!curr_page)
         throw std::runtime_error("first page is not designated");
 }
 
-void PageManager::showPage(WindowManager& windowManager)
+void PageManager::show_page(WindowManager& window_manager)
 {
-    while(auto event = windowManager.pollEvent())
+    while(auto event = window_manager.poll_event())
     {
         if(event->is<Event::Closed>())
-            windowManager.close();
-        windowManager.resizeWindow(event);
-        currPage->getLetManager().actKeyboardLet(event);
+            window_manager.close();
+        window_manager.resize_window(event);
+        curr_page->get_let_manager().act_keyboard_let(event);
     }
-    windowManager.clear();
-    signal = currPage->proceedPage(fileManager, windowManager.getWindow());
-    windowManager.setView();
-    windowManager.display();
+    window_manager.clear();
+    signal = curr_page->proceed_page(file_manager, window_manager.get_window());
+    window_manager.set_view();
+    window_manager.display();
     
-    if(signal.requestCapture && *signal.requestCapture)
+    if(signal.request_capture && *signal.request_capture)
     {
-        windowManager.captureWindow();
-        signal.requestCapture = false;
+        window_manager.capture_window();
+        signal.request_capture = false;
     }
-    if(signal.nextPage)
-        changePage(*signal.nextPage);
+    if(signal.next_page)
+        change_page(*signal.next_page);
 }

@@ -4,17 +4,18 @@
 #include <SFML/Graphics.hpp>
 #include <array>
 
-namespace imageConstant//화면을 구성하는 이미지 크기와 관련한 상수
+namespace image_constant//화면을 구성하는 이미지 크기와 관련한 상수
 {
-    constexpr auto BLOCK_SIZE = tools::POSi(64,64);
+    constexpr auto TILE_SIZE = tools::POSi(64,64);
     //worldAsset
-    enum BlockCode
+    enum TileCode
     {
+        VOID = -1,
         GRASS_1,GRASS_2,GRASS_3,
         CULTIVATE,
         COUNT
     };
-    constexpr std::array<tools::POSi,BlockCode::COUNT> BLOCK_POS = {
+    constexpr std::array<tools::POSi,TileCode::COUNT> TILE_POS = {
         tools::POSi(0, 0), 
         tools::POSi(1, 0), 
         tools::POSi(2, 0), 

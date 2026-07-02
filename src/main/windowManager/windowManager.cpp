@@ -4,22 +4,22 @@
 WindowManager::WindowManager(std::string&& name)
     : videoMode(sf::VideoMode::getDesktopMode())
     , window(videoMode, std::move(name))
-    , screenSize(tools::POSf(videoMode.size.x,videoMode.size.y))
-    , screenCenter(screenSize/2)
-    , ratio(screenSize.x/fmax(screenSize.y,1))
-    , captureSprite(sf::Sprite(captureTexture))
+    , screen_size(tools::POSf(videoMode.size.x,videoMode.size.y))
+    , screen_center(screen_size/2)
+    , ratio(screen_size.x/fmax(screen_size.y,1))
+    , capture_sprite(sf::Sprite(capture_texture))
 {
-    view = sf::View(sf::FloatRect({0.f, 0.f}, {screenSize.x, screenSize.y}));
-    setView();
+    view = sf::View(sf::FloatRect({0.f, 0.f}, {screen_size.x, screen_size.y}));
+    set_view();
 
-    setFrameRateLimit(120);
+    set_frame_rate_limit(120);
 }
 
-WindowManager::SCREEN_SIZE_TYPE WindowManager::getScreenSize() {return screenSize;}
-WindowManager::SCREEN_SIZE_TYPE WindowManager:: getScreenCenter() {return screenCenter;}
+WindowManager::ScreenSizeType WindowManager::get_screen_size() {return screen_size;}
+WindowManager::ScreenSizeType WindowManager::get_screen_center() {return screen_center;}
 
 
-sf::FloatRect WindowManager::getResizedWindow(const sf::Event::Resized* resize)
+sf::FloatRect WindowManager::get_resized_window(const sf::Event::Resized* resize)
 {
     if(!resize)
         throw std::runtime_error("No resize event! in windowResize()");
@@ -41,24 +41,24 @@ sf::FloatRect WindowManager::getResizedWindow(const sf::Event::Resized* resize)
     return sf::FloatRect({viewportX, viewportY}, {viewportWidth, viewportHeight});
 }
 
-const decltype(WindowManager::window)& WindowManager::getWindow() const
+const decltype(WindowManager::window)& WindowManager::get_window() const
 {
     return window;
 }
-decltype(WindowManager::window)& WindowManager::getWindow()
+decltype(WindowManager::window)& WindowManager::get_window()
 {
     return window;
 }
 
-void WindowManager::captureWindow()
+void WindowManager::capture_window()
 {
-    captureTexture = sf::Texture(window.getSize()); 
-    captureTexture.update(window);
-    captureSprite.setTexture(captureTexture, true);
+    capture_texture = sf::Texture(window.getSize()); 
+    capture_texture.update(window);
+    capture_sprite.setTexture(capture_texture, true);
 }
-decltype(WindowManager::captureSprite) WindowManager::getCaptureSprite() const
+decltype(WindowManager::capture_sprite) WindowManager::get_capture_sprite() const
 {
-    return captureSprite;
+    return capture_sprite;
 }
 
 
@@ -72,32 +72,32 @@ void WindowManager::close()
     window.close();
 }
 
-bool WindowManager::isOpen() const {return window.isOpen();}
+bool WindowManager::is_open() const {return window.isOpen();}
 
 void WindowManager::display()
 {
     window.display();
 }
 
-void WindowManager::setFrameRateLimit(unsigned int frameRate)
+void WindowManager::set_frame_rate_limit(unsigned int frameRate)
 {
     window.setFramerateLimit(frameRate);
 }
 
-std::optional<sf::Event> WindowManager::pollEvent()
+std::optional<sf::Event> WindowManager::poll_event()
 {
     return window.pollEvent();
 }
 
-void WindowManager::resizeWindow(const std::optional<sf::Event>& event)
+void WindowManager::resize_window(const std::optional<sf::Event>& event)
 {
     if(!event)
         return;
     if(const auto* resized = event->getIf<sf::Event::Resized>())
-        view.setViewport(getResizedWindow(resized));
+        view.setViewport(get_resized_window(resized));
 }
 
-void WindowManager::setView()
+void WindowManager::set_view()
 {
     window.setView(view);
 }

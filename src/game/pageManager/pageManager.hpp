@@ -12,15 +12,15 @@
 class PageManager
 {
     private : 
-        FileManager fileManager;
-        std::unique_ptr<Page> currPage;
+        FileManager file_manager;
+        std::unique_ptr<Page> curr_page;
         PageSignal signal;
 
-        const WindowManager::SCREEN_SIZE_TYPE screenSize;
+        const WindowManager::ScreenSizeType screen_size;
 
-        void changePage(Page::Name pageName);
+        void change_page(Page::Name page_name);
     public :
-        PageManager(WindowManager::SCREEN_SIZE_TYPE screenSize);
-        void showPage(WindowManager& windowManager);
+        PageManager(WindowManager::ScreenSizeType screen_size);
+        void show_page(WindowManager& window_manager);
 
 };

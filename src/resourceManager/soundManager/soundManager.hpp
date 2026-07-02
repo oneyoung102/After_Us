@@ -11,10 +11,10 @@ class SoundManager
         std::vector<std::unique_ptr<sf::Sound>> sounds;
     public :
         SoundManager();
-        void manageSounds();
-        void playSound(sf::SoundBuffer& buffer);
-        void playMusic(const std::filesystem::path& path);
-        bool isEmpty();
-        void clearBack();
-        bool backIsAlive();
+        void manage_sounds();
+        void play_sound(sf::SoundBuffer& buffer);
+        void play_music(const std::filesystem::path& path);
+        bool is_empty();
+        void clear_back();
+        bool back_is_alive();
 };

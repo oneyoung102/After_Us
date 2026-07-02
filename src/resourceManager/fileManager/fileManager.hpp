@@ -22,28 +22,28 @@ class FileManager
 
         sf::Font font;
 
-        void getAllTexture();
-        void getAllSprite();
-        void getFont();
-        void getAllSound();
-        void getAllMusicPath();
+        void get_all_texture();
+        void get_all_sprite();
+        void get_font();
+        void get_all_sound();
+        void get_all_music_path();
         
     public :
         FileManager();
-        static std::filesystem::path getExecutablePath();
-        static std::filesystem::path getFolderPath(const std::string& folder);
+        static std::filesystem::path get_executable_path();
+        static std::filesystem::path get_folder_path(const std::string& folder);
         
         enum class Image{//이미지 명
-            worldAsset,
+            world_asset,
         };
         enum class Sound{//사운드 명
         };
         enum class Music{//음악 명
 
         };
-        sf::Sprite getSprite(Image name) const;
-        const sf::Font& getFont() const;
-        sf::SoundBuffer& getBuffer(Sound name);
-        const std::filesystem::path& getMusic(Music name) const;
-        const std::filesystem::path& getRsandomMusic() = delete;
+        sf::Sprite get_sprite(Image name) const;
+        const sf::Font& get_font() const;
+        sf::SoundBuffer& get_buffer(Sound name);
+        const std::filesystem::path& get_music(Music name) const;
+        const std::filesystem::path& get_random_music() = delete;
 };

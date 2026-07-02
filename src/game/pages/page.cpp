@@ -1,6 +1,6 @@
 #include "game/pages/page.hpp"
 
 Page::Page()
-    : convertPage(false)
+    : convert_page(false)
 {}
-LetManager& Page::getLetManager(){return letManager;}
+LetManager& Page::get_let_manager(){return let_manager;}

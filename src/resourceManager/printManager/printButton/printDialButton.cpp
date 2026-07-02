@@ -21,6 +21,6 @@ void PrintDialButton::print(RenderWindow& window, const Shader& shader)
             window.draw(sprite);
         window.draw(text);
     }  
-    if(isAlive())
+    if(is_alive())
         --life;
 }

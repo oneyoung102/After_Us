@@ -14,7 +14,7 @@ using namespace std;
 using namespace tools;
 namespace fs = std::filesystem;
 
-fs::path FileManager::getExecutablePath() 
+fs::path FileManager::get_executable_path() 
 {
     char path[PATH_MAX];
     uint32_t size = sizeof(path);
@@ -22,14 +22,14 @@ fs::path FileManager::getExecutablePath()
         throw runtime_error("Unable to get executable path");
     return fs::canonical(path);
 }
-fs::path FileManager::getFolderPath(const string& folder)
+fs::path FileManager::get_folder_path(const string& folder)
 {
-    return getExecutablePath().parent_path().parent_path() / folder;
+    return get_executable_path().parent_path().parent_path() / folder;
 }
 
-void FileManager::getAllTexture()
+void FileManager::get_all_texture()
 {
-    const fs::path imgPath = getFolderPath("Resources/assets")/"image";
+    const fs::path imgPath = get_folder_path("Resources/assets")/"image";
     vector<fs::path> files;
     for (const auto& entry : fs::directory_iterator(imgPath))
         if (entry.path().extension() == ".png")
@@ -43,22 +43,22 @@ void FileManager::getAllTexture()
         textures.push_back(texture);
     }
 }
-void FileManager::getAllSprite()
+void FileManager::get_all_sprite()
 {
     for(const auto& texture : textures)
         sprites.push_back(Sprite(texture));
 }
 
-void FileManager::getFont()
+void FileManager::get_font()
 {
-    const fs::path fontPath = getFolderPath("Resources/assets")/"font/puyo_font.ttf";
+    const fs::path fontPath = get_folder_path("Resources/assets")/"font/puyo_font.ttf";
     if (!font.openFromFile(fontPath.string()))
         throw runtime_error("Unable to load image");
 }
 
-void FileManager::getAllSound()
+void FileManager::get_all_sound()
 {
-    const fs::path soundPath = getFolderPath("Resources/assets")/"sound";
+    const fs::path soundPath = get_folder_path("Resources/assets")/"sound";
     vector<fs::path> files;
     for (const auto& entry : fs::directory_iterator(soundPath))
         if (entry.path().extension() == ".mp3")
@@ -73,9 +73,9 @@ void FileManager::getAllSound()
     }
 }
 
-void FileManager::getAllMusicPath()
+void FileManager::get_all_music_path()
 {
-    const fs::path soundPath = getFolderPath("Resources/assets")/"music";
+    const fs::path soundPath = get_folder_path("Resources/assets")/"music";
     for (const auto& entry : fs::directory_iterator(soundPath))
         if (entry.path().extension() == ".mp3")
             musics.push_back(entry.path());
@@ -84,16 +84,16 @@ void FileManager::getAllMusicPath()
 
 FileManager::FileManager() : gen(random_device{}())
 {
-    getAllTexture();//모든 이미지 불러오기
-    getAllSprite();
-    //getFont();
-    getAllSound();
-    getAllMusicPath();
+    get_all_texture();//모든 이미지 불러오기
+    get_all_sprite();
+    //get_font();
+    get_all_sound();
+    get_all_music_path();
 }
-Sprite FileManager::getSprite(FileManager::Image name) const {return sprites[CASTs(name)];}
-const Font& FileManager::getFont() const {return font;}
-sf::SoundBuffer& FileManager::getBuffer(FileManager::Sound name){return buffers[CASTs(name)];}
-const fs::path& FileManager::getMusic(FileManager::Music name) const {return musics[CASTs(name)];}
+Sprite FileManager::get_sprite(FileManager::Image name) const {return sprites[CASTs(name)];}
+const Font& FileManager::get_font() const {return font;}
+sf::SoundBuffer& FileManager::get_buffer(FileManager::Sound name){return buffers[CASTs(name)];}
+const fs::path& FileManager::get_music(FileManager::Music name) const {return musics[CASTs(name)];}
 // const fs::path& fileManager::get_random_music()
 // {
 //     uniform_int_distribution<> dist(CASTi(Music::game_music1), CASTi(Music::game_music11));

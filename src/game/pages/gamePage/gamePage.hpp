@@ -1,18 +1,15 @@
 #pragma once
 
+#include "game/pages/gamePage/gameManager/world/worldManager.hpp"
 #include "game/pages/page.hpp"
 #include "main/windowManager/windowManager.hpp"
-#include "resourceManager/printManager/imageConstant.hpp"
-#include <vector>
 
 class GamePage : public Page
 {
     private :
-        using WORLD_TYPE = std::vector<std::vector<imageConstant::BlockCode>>;
-        const tools::POSf worldSize;
-        WORLD_TYPE world;
+        WorldManager world_manager;
     public :
-        GamePage(const FileManager& fileManager, WindowManager::SCREEN_SIZE_TYPE screenSize);
-        virtual PageSignal proceedPage(FileManager& fileManager, sf::RenderWindow& window) override;
-        constexpr virtual Name getName() const override;
+        GamePage(const FileManager& file_manager, WindowManager::ScreenSizeType screen_size);
+        virtual PageSignal proceed_page(FileManager& file_manager, sf::RenderWindow& window) override;
+        constexpr virtual Name get_name() const override;
 };

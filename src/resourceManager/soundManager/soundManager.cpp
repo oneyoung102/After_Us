@@ -6,7 +6,7 @@ using namespace std;
 using namespace sf;
 
 SoundManager::SoundManager(){}
-void SoundManager::manageSounds()
+void SoundManager::manage_sounds()
 {
     for(size_t i = 0 ; i < sounds.size() ; )
         if(sounds[i]->getStatus() == Sound::Status::Stopped)
@@ -17,27 +17,27 @@ void SoundManager::manageSounds()
         else
             ++i;
 }
-void SoundManager::playSound(SoundBuffer& buffer)
+void SoundManager::play_sound(SoundBuffer& buffer)
 {
     sounds.push_back(make_unique<Sound>(buffer));
     sounds.back()->play();
 }
 
-void SoundManager::playMusic(const filesystem::path& path)
+void SoundManager::play_music(const filesystem::path& path)
 {
     music = Music(path);
     music.setLooping(true);
     music.play();
 }
 
- bool SoundManager::isEmpty(){return sounds.empty();}
+ bool SoundManager::is_empty(){return sounds.empty();}
 
-void SoundManager::clearBack()
+void SoundManager::clear_back()
 {
     if(!sounds.empty())
         sounds.pop_back();
 }
-bool SoundManager::backIsAlive()
+bool SoundManager::back_is_alive()
 {
     return !sounds.empty()
         && sounds.back()->getStatus() == Sound::Status::Playing;

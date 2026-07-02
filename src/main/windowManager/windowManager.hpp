@@ -7,41 +7,41 @@
 class WindowManager
 {
     public :
-        using SCREEN_SIZE_TYPE = tools::POSf;
+        using ScreenSizeType = tools::POSf;
     private :
         sf::VideoMode videoMode;
 
-        const SCREEN_SIZE_TYPE screenSize, screenCenter;
+        const ScreenSizeType screen_size, screen_center;
         const float ratio;
         
         sf::RenderWindow window;
         sf::View view;
 
-        sf::Texture captureTexture;
-        sf::Sprite captureSprite;
+        sf::Texture capture_texture;
+        sf::Sprite capture_sprite;
 
-        sf::FloatRect getResizedWindow(const sf::Event::Resized* resize);
+        sf::FloatRect get_resized_window(const sf::Event::Resized* resize);
     public :
         WindowManager(std::string&& name);
 
-        SCREEN_SIZE_TYPE getScreenSize();
-        SCREEN_SIZE_TYPE getScreenCenter();
+        ScreenSizeType get_screen_size();
+        ScreenSizeType get_screen_center();
 
-        const decltype(window)& getWindow() const;
-        decltype(window)& getWindow();
+        const decltype(window)& get_window() const;
+        decltype(window)& get_window();
 
-        void captureWindow();
-        decltype(captureSprite) getCaptureSprite() const;
+        void capture_window();
+        decltype(capture_sprite) get_capture_sprite() const;
 
         void clear(sf::Color color = sf::Color::Black);
         void close();
-        bool isOpen() const;
+        bool is_open() const;
         void display();
 
-        void setFrameRateLimit(unsigned int frameRate);
+        void set_frame_rate_limit(unsigned int frame_rate);
 
-        std::optional<sf::Event> pollEvent();
+        std::optional<sf::Event> poll_event();
 
-        void resizeWindow(const std::optional<sf::Event>& event);
-        void setView();
+        void resize_window(const std::optional<sf::Event>& event);
+        void set_view();
 };

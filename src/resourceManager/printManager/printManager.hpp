@@ -11,29 +11,29 @@
 class PrintManager
 {
     private :
-        std::vector<std::unique_ptr<PrintObject>> __printObjects;
-        std::vector<std::unique_ptr<PrintText>> __printTexts;
-        std::vector<std::unique_ptr<PrintButton>> __printButtons;
+        std::vector<std::unique_ptr<PrintObjectInterface>> __print_objects;
+        std::vector<std::unique_ptr<PrintText>> __print_texts;
+        std::vector<std::unique_ptr<PrintButton>> __print_buttons;
         sf::Shader shader;
     public :
         PrintManager();
-        void printObjects(sf::RenderWindow& window);
-        void printTexts(sf::RenderWindow& window);
-        void printButtons(sf::RenderWindow& window);
+        void print_objects(sf::RenderWindow& window);
+        void print_texts(sf::RenderWindow& window);
+        void print_buttons(sf::RenderWindow& window);
 
-        void addObject(std::unique_ptr<PrintObject>&& object);
-        void addText(std::unique_ptr<PrintText>&& text);
-        void addButton(std::unique_ptr<PrintButton>&& button);
+        void add_object(std::unique_ptr<PrintObjectInterface>&& object);
+        void add_text(std::unique_ptr<PrintText>&& text);
+        void add_button(std::unique_ptr<PrintButton>&& button);
 
-        bool objectIsEmpty();
-        bool textIsEmpty();
-        bool buttonIsEmpty();
+        bool object_is_empty();
+        bool text_is_empty();
+        bool button_is_empty();
 
-        void clearObjectBack();
-        void clearTextBack();
-        void clearButtonBack();
+        void clear_object_back();
+        void clear_text_back();
+        void clear_button_back();
 
-        bool objectBackIsAlive();
-        bool textBackIsAlive();
-        bool buttonBackIsAlive();
+        bool object_back_is_alive();
+        bool text_back_is_alive();
+        bool button_back_is_alive();
 };

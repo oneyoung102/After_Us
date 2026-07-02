@@ -10,82 +10,82 @@ using namespace sf;
 
 PrintManager::PrintManager()
 {
-    if(!shader.loadFromFile(FileManager::getFolderPath("Data")/"brightness.txt", sf::Shader::Type::Fragment))
+    if(!shader.loadFromFile(FileManager::get_folder_path("Data")/"brightness.txt", sf::Shader::Type::Fragment))
         throw runtime_error("file for shading doesn't exist");
-    shader.setUniform("brightness", imageConstant::BRIGHTNESS);
+    shader.setUniform("brightness", image_constant::BRIGHTNESS);
 }
 
-void PrintManager::printObjects(RenderWindow& window)
+void PrintManager::print_objects(RenderWindow& window)
 {
-    for(int i = 0 ; i < __printObjects.size() ; )
-        if(__printObjects[i]->isAlive())
+    for(int i = 0 ; i < __print_objects.size() ; )
+        if(__print_objects[i]->is_alive())
         {
-            __printObjects[i]->print(window);
+            __print_objects[i]->print(window);
             ++i;
         }
         else
         {
-            std::swap(__printObjects[i], __printObjects.back());
-            __printObjects.pop_back();
+            std::swap(__print_objects[i], __print_objects.back());
+            __print_objects.pop_back();
         }
 }
-void PrintManager::printTexts(RenderWindow& window)
+void PrintManager::print_texts(RenderWindow& window)
 {
-    for(int i = 0 ; i < __printTexts.size() ; )
-        if(__printTexts[i]->isAlive())
+    for(int i = 0 ; i < __print_texts.size() ; )
+        if(__print_texts[i]->is_alive())
         {
-            __printTexts[i]->print(window);
+            __print_texts[i]->print(window);
             ++i;
         }
         else
         {
-            std::swap(__printTexts[i], __printTexts.back());
-            __printTexts.pop_back();
+            std::swap(__print_texts[i], __print_texts.back());
+            __print_texts.pop_back();
         }
 }
-void PrintManager::printButtons(RenderWindow& window)
+void PrintManager::print_buttons(RenderWindow& window)
 {
-    for(int i = 0 ; i < __printButtons.size() ; )
-        if(__printButtons[i]->isAlive())
+    for(int i = 0 ; i < __print_buttons.size() ; )
+        if(__print_buttons[i]->is_alive())
         {
-            __printButtons[i]->print(window, shader);
+            __print_buttons[i]->print(window, shader);
             ++i;
         }
         else
         {
-            std::swap(__printButtons[i], __printButtons.back());
-            __printButtons.pop_back();
+            std::swap(__print_buttons[i], __print_buttons.back());
+            __print_buttons.pop_back();
         }
 }
 
-void PrintManager::addObject(unique_ptr<PrintObject>&& object){__printObjects.push_back(std::move(object));}
-void PrintManager::addText(unique_ptr<PrintText>&& text){__printTexts.push_back(std::move(text));}
-void PrintManager::addButton(unique_ptr<PrintButton>&& button){__printButtons.push_back(std::move(button));}
+void PrintManager::add_object(unique_ptr<PrintObjectInterface>&& object){__print_objects.push_back(std::move(object));}
+void PrintManager::add_text(unique_ptr<PrintText>&& text){__print_texts.push_back(std::move(text));}
+void PrintManager::add_button(unique_ptr<PrintButton>&& button){__print_buttons.push_back(std::move(button));}
 
-bool PrintManager::objectIsEmpty(){return __printObjects.empty();}
-bool PrintManager::textIsEmpty(){return __printTexts.empty();}
-bool PrintManager::buttonIsEmpty(){return __printButtons.empty();}
+bool PrintManager::object_is_empty(){return __print_objects.empty();}
+bool PrintManager::text_is_empty(){return __print_texts.empty();}
+bool PrintManager::button_is_empty(){return __print_buttons.empty();}
 
-void PrintManager::clearObjectBack(){__printObjects.pop_back();}
-void PrintManager::clearTextBack(){__printTexts.pop_back();}
-void PrintManager::clearButtonBack(){__printButtons.pop_back();}
+void PrintManager::clear_object_back(){__print_objects.pop_back();}
+void PrintManager::clear_text_back(){__print_texts.pop_back();}
+void PrintManager::clear_button_back(){__print_buttons.pop_back();}
 
-bool PrintManager::objectBackIsAlive()
+bool PrintManager::object_back_is_alive()
 {
-    return !__printObjects.empty()
-        && __printObjects.back()->isAlive()
-        && !__printObjects.back()->isImmortal();
+    return !__print_objects.empty()
+        && __print_objects.back()->is_alive()
+        && !__print_objects.back()->is_immortal();
 }
-bool PrintManager::textBackIsAlive()
+bool PrintManager::text_back_is_alive()
 {
-    return !__printTexts.empty()
-        && __printTexts.back()->isAlive()
-        && !__printTexts.back()->isImmortal();
+    return !__print_texts.empty()
+        && __print_texts.back()->is_alive()
+        && !__print_texts.back()->is_immortal();
 }
-bool PrintManager::buttonBackIsAlive()
+bool PrintManager::button_back_is_alive()
 {
-    return !__printButtons.empty()
-        && __printButtons.back()->isAlive()
-        && !__printButtons.back()->isImmortal();
+    return !__print_buttons.empty()
+        && __print_buttons.back()->is_alive()
+        && !__print_buttons.back()->is_immortal();
 }
 

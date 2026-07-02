@@ -13,8 +13,6 @@
                 "src/resourceManager/fileManager/fileManager.cpp",
                 "src/resourceManager/soundManager/soundManager.cpp",
                 "src/resourceManager/printManager/printManager.cpp",
-                "src/resourceManager/printManager/printObject/printObject.cpp",
-                "src/resourceManager/printManager/printObject/printWorld.cpp",
 
                 "src/resourceManager/printManager/printText/printText.cpp",
                 "src/resourceManager/printManager/printText/printTextFlash.cpp",
@@ -27,6 +25,14 @@
                 "src/game/pageManager/pageManager.cpp",
                 "src/game/pages/page.cpp",
                 "src/game/pages/gamePage/gamePage.cpp",
+                "src/game/pages/gamePage/gameManager/gameManager.cpp",
+                "src/game/pages/gamePage/gameManager/world/world.cpp",
+                "src/game/pages/gamePage/gameManager/world/worldManager.cpp",
+
+                "src/game/pages/gamePage/gameManager/thing/thing.cpp",
+                "src/game/pages/gamePage/gameManager/thing/interactableThing/interactableThing.cpp",
+                "src/game/pages/gamePage/gameManager/thing/movingThing/movingThing.cpp",
+                "src/game/pages/gamePage/gameManager/thing/things/camera.cpp",
 
                 "-o",
                 "${workspaceFolder}/bin/after_us",

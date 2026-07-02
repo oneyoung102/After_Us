@@ -28,8 +28,8 @@ class Button
                 //ps.play_sound(pfs.get_buffer(fileManager::Sound::cursor));
             });
             signalReceiver.addExecute(ButtonCursorSignal::select, [&ps,&pl,this](FileManager& pfs){
-                if(!ps.isEmpty())
-                    ps.clearBack();
+                if(!ps.is_empty())
+                    ps.clear_back();
                 //ps.play_sound(pfs.get_buffer(fileManager::Sound::select));
                 pl.clear();
                 __selected = true;
