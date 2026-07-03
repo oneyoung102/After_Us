@@ -24,7 +24,7 @@ PrintText::PrintText(tools::POSf pos, const string& content, const Font& font, i
 }
 
 bool PrintText::is_alive(){return life != 0;}
-bool PrintText::is_immortal(){return life == image_constant::PRINT_IMMORTAL;}
+bool PrintText::is_immortal(){return life == IMMORTAL;}
 
 void PrintText::print(RenderWindow& window)
 {

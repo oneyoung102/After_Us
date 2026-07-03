@@ -3,9 +3,10 @@
 #include <SFML/Graphics.hpp>
 #include <memory>
 
-#include "printObject/printObject.hpp"
-#include "printText/printText.hpp"
-#include "printButton/printButton.hpp"
+#include "resourceManager/printManager/printObject/printObject.hpp"
+#include "resourceManager/printManager/printText/printText.hpp"
+#include "resourceManager/printManager/printButton/printButton.hpp"
+#include "resourceManager/printManager/shader/shader.hpp"
 
 
 class PrintManager
@@ -14,7 +15,7 @@ class PrintManager
         std::vector<std::unique_ptr<PrintObjectInterface>> __print_objects;
         std::vector<std::unique_ptr<PrintText>> __print_texts;
         std::vector<std::unique_ptr<PrintButton>> __print_buttons;
-        sf::Shader shader;
+        Shader shader;
     public :
         PrintManager();
         void print_objects(sf::RenderWindow& window);

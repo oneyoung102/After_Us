@@ -13,6 +13,7 @@
                 "src/resourceManager/fileManager/fileManager.cpp",
                 "src/resourceManager/soundManager/soundManager.cpp",
                 "src/resourceManager/printManager/printManager.cpp",
+                "src/resourceManager/printManager/shader/shader.cpp",
 
                 "src/resourceManager/printManager/printText/printText.cpp",
                 "src/resourceManager/printManager/printText/printTextFlash.cpp",

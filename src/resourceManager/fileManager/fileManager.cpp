@@ -7,7 +7,9 @@
 #include <string>
 
 #include "resourceManager/fileManager/fileManager.hpp"
+#include "resourceManager/fileManager/imageData/imageDatas.hpp"
 #include "tools/cast.hpp"
+
 
 using namespace sf;
 using namespace std;
@@ -27,8 +29,9 @@ fs::path FileManager::get_folder_path(const string& folder)
     return get_executable_path().parent_path().parent_path() / folder;
 }
 
-void FileManager::get_all_texture()
+std::vector<sf::Texture> FileManager::get_all_texture()
 {
+    std::vector<sf::Texture> textures;
     const fs::path imgPath = get_folder_path("Resources/assets")/"image";
     vector<fs::path> files;
     for (const auto& entry : fs::directory_iterator(imgPath))
@@ -42,13 +45,8 @@ void FileManager::get_all_texture()
             throw runtime_error("Unable to load image");
         textures.push_back(texture);
     }
+    return textures;
 }
-void FileManager::get_all_sprite()
-{
-    for(const auto& texture : textures)
-        sprites.push_back(Sprite(texture));
-}
-
 void FileManager::get_font()
 {
     const fs::path fontPath = get_folder_path("Resources/assets")/"font/puyo_font.ttf";
@@ -82,15 +80,17 @@ void FileManager::get_all_music_path()
     sort(musics.begin(), musics.end());
 }
 
-FileManager::FileManager() : gen(random_device{}())
+FileManager::FileManager()
+    : gen(random_device{}())
+    , image_datas(ImageDatas(get_all_texture()))
 {
-    get_all_texture();//모든 이미지 불러오기
-    get_all_sprite();
     //get_font();
     get_all_sound();
     get_all_music_path();
 }
-Sprite FileManager::get_sprite(FileManager::Image name) const {return sprites[CASTs(name)];}
+
+const ImageDatas& FileManager::get_image_datas() const {return image_datas;}
+
 const Font& FileManager::get_font() const {return font;}
 sf::SoundBuffer& FileManager::get_buffer(FileManager::Sound name){return buffers[CASTs(name)];}
 const fs::path& FileManager::get_music(FileManager::Music name) const {return musics[CASTs(name)];}

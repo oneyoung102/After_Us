@@ -2,16 +2,14 @@
 #include <SFML/Graphics.hpp>
 #include <string>
 
-#include "resourceManager/printManager/imageConstant.hpp"
-
 using namespace std;
 using namespace sf;
-using namespace image_constant;
 
-PrintButton::PrintButton(sf::Sprite s, const bool& selected, tools::POSf pos, const string& content, const Font& font, float scaling, sf::Color color, sf::Text::Style style, int life)
-    : text(Text(font))
+PrintButton::PrintButton(const ImageDatas::IMAGE_DATA& image_data, const bool& selected, tools::POSf pos, const string& content, const Font& font, float scaling, sf::Color color, sf::Text::Style style, int life)
+    : image_data(image_data)
+    , sprite(image_data.get_sprite())
+    , text(Text(font))
     , selected(selected)
-    , sprite(s)
     , life(life)
 {
     text.setString(content);
@@ -38,12 +36,15 @@ PrintButton::PrintButton(sf::Sprite s, const bool& selected, tools::POSf pos, co
 }
 
 bool PrintButton::is_alive(){return life != 0;}
-bool PrintButton::is_immortal(){return life == image_constant::PRINT_IMMORTAL;}
+bool PrintButton::is_immortal(){return life == IMMORTAL;}
 
-void PrintButton::print(RenderWindow& window, const Shader& shader)
+void PrintButton::print(RenderWindow& window, ::Shader& shader)
 {
     if(selected) 
-        window.draw(sprite,&shader);
+    {
+        shader.set_brightness(BUTTON_BRIGHTNESS);
+        window.draw(sprite,&*shader);
+    }
     else 
         window.draw(sprite);
     window.draw(text);

@@ -1,7 +1,6 @@
 #pragma once
 
 #include <stdexcept>
-#include <type_traits>
 #include <vector>
 #include <queue>
 #include <array>
@@ -9,6 +8,7 @@
 #include "game/objectSignal/objectSignal.hpp"
 #include "tools/pos.hpp"
 #include "tools/dir.hpp"
+#include "tools/hasWHAT.hpp"
 
 enum class ButtonCursorSignal
 {
@@ -16,12 +16,6 @@ enum class ButtonCursorSignal
     cursor,
     COUNT
 };
-
-template<class T, class P = void>
-class has_NONE : public std::false_type {};
-template<class T>
-class has_NONE<T, std::void_t<decltype(T::NONE)>> : public std::true_type {};
-
 
 template<size_t R, size_t C, class buttonName>
 class ButtonCursor : public ObjectSignal<ButtonCursorSignal> // buttonName에 NONE이 원소로 있어야 함
@@ -70,7 +64,7 @@ class ButtonCursor : public ObjectSignal<ButtonCursorSignal> // buttonName에 NO
         ButtonCursor(std::vector<std::vector<buttonName>>&& allocated, bool cyclic = false)
             : cyclic(cyclic)
         {
-            static_assert(has_NONE<buttonName>::value, "buttonName must have NONE value.");
+            static_assert(tools::has_none<buttonName>(), "buttonName must have NONE value.");
             
             if(allocated.empty() || allocated.size() != R || allocated[0].size() != C)
                 throw std::runtime_error("Button allocated vector is not matched with buttonCursor template variable");

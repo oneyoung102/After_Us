@@ -3,7 +3,6 @@
 #include <SFML/Graphics.hpp>
 #include "tools/pos.hpp"
 #include "printText.hpp"
-#include "resourceManager/printManager/imageConstant.hpp"
 #include <string>
 
 class PrintTextFlash : public PrintText
@@ -14,6 +13,6 @@ class PrintTextFlash : public PrintText
         bool show;
     public:
         PrintTextFlash(tools::POSf pos, const std::string& content, const sf::Font& font, int size, int cycle, 
-            sf::Color color = sf::Color::White, sf::Text::Style style = sf::Text::Style::Bold, int life = image_constant::PRINT_IMMORTAL);
+            sf::Color color = sf::Color::White, sf::Text::Style style = sf::Text::Style::Bold, int life = IMMORTAL);
         void print(sf::RenderWindow& w) override;
 };

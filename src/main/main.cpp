@@ -4,6 +4,7 @@
 #include <stdexcept>
 #include "game/pageManager/pageManager.hpp"
 #include "main/windowManager/windowManager.hpp"
+#include "resourceManager/fileManager/fileManager.hpp"
     
 int main()
 {   

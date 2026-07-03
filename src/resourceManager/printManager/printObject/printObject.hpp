@@ -1,40 +1,53 @@
 #pragma once
 
+#include "resourceManager/fileManager/imageData/imageDatas.hpp"
+#include "resourceManager/printManager/shader/shader.hpp"
 #include "tools/pos.hpp"
-#include "resourceManager/printManager/imageConstant.hpp"
 #include <SFML/Graphics.hpp>
 
 class PrintObjectInterface
 {
     protected:
+        const ImageDatas::IMAGE_DATA& image_data;
         sf::Sprite sprite;
         tools::POSf pos;
         int life;
-        void print_sprite(sf::RenderWindow& window, const tools::POSf& screen_pos)
+        void print_sprite(sf::RenderWindow& window, const tools::POSf& screen_pos, Shader& shader)
         {
             sprite.setPosition(sf::Vector2f(screen_pos.x,screen_pos.y));
-            window.draw(sprite);
+            window.draw(sprite, &*shader);
             if(is_alive())
                 --life;
         }
+        void print_transparent(sf::RenderWindow& window, sf::Color&& color, const tools::POSf& screen_pos, tools::POSf&& size)
+        {
+            sf::RectangleShape rect(sf::Vector2f(size.x, size.y));
+            rect.setFillColor(color);
+            rect.setPosition(sf::Vector2f(screen_pos.x, screen_pos.y));
+            window.draw(rect);
+        }
     public:
-        PrintObjectInterface(sf::Sprite s, const tools::POSf& pos, int life = image_constant::PRINT_IMMORTAL)
-            : sprite(s)
+        static constexpr int IMMORTAL = -1;
+
+        PrintObjectInterface(const ImageDatas::IMAGE_DATA& image_data, const tools::POSf& pos, int life = IMMORTAL)
+            : image_data(image_data)
+            , sprite(image_data.get_sprite())
             , pos(pos)
             , life(life) // life == -1 일 때는 영생
         {}
 
-        PrintObjectInterface(sf::Sprite s, int life = image_constant::PRINT_IMMORTAL)
-            : sprite(s)
+        PrintObjectInterface(const ImageDatas::IMAGE_DATA& image_data, int life = IMMORTAL)
+            : image_data(image_data)
+            , sprite(image_data.get_sprite())
             , pos()
             , life(life) // life == -1 일 때는 영생
         {}
         virtual ~PrintObjectInterface() = default;
 
         bool is_alive() const {return life != 0;}
-        bool is_immortal() const {return life == image_constant::PRINT_IMMORTAL;}
+        bool is_immortal() const {return life == IMMORTAL;}
 
-        virtual void print(sf::RenderWindow& w) = 0;
+        virtual void print(sf::RenderWindow& w, Shader& shader) = 0;
 };
 
 

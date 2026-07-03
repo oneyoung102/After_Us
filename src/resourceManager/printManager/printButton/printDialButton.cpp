@@ -5,18 +5,20 @@
 #include "resourceManager/printManager/printButton/printButton.hpp"
 
 using namespace std;
-using namespace sf;
 
-PrintDialButton::PrintDialButton(sf::Sprite s, const bool& selected, const bool& dial_selected, tools::POSf pos, const string& content, const Font& font, float scaling, sf::Color color, sf::Text::Style style, int life)
-    : PrintButton(s,selected,pos,content,font,scaling,color,style,life)
+PrintDialButton::PrintDialButton(const ImageDatas::IMAGE_DATA& image_data, const bool& selected, const bool& dial_selected, tools::POSf pos, const string& content, const sf::Font& font, float scaling, sf::Color color, sf::Text::Style style, int life)
+    : PrintButton(image_data,selected,pos,content,font,scaling,color,style,life)
     , dial_selected(dial_selected)
 {}
-void PrintDialButton::print(RenderWindow& window, const Shader& shader)
+void PrintDialButton::print(sf::RenderWindow& window, Shader& shader)
 {
     if(selected)
     {
         if(dial_selected) 
-            window.draw(sprite,&shader);
+        {
+            shader.set_brightness(BUTTON_BRIGHTNESS);
+            window.draw(sprite,&*shader);
+            }
         else 
             window.draw(sprite);
         window.draw(text);

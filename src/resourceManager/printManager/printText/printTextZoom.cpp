@@ -1,5 +1,4 @@
 #include "printText.hpp"
-#include "resourceManager/printManager/imageConstant.hpp"
 #include "printTextZoom.hpp"
 #include <SFML/Graphics.hpp>
 #include <string>
@@ -10,8 +9,8 @@ using namespace sf;
 PrintTextZoom::PrintTextZoom(tools::POSf pos, const string& content, const Font& font, int size, int cycle, sf::Color color, sf::Text::Style style, int life)
     : PrintText(pos,content,font,size,color,style,life)
     , cycle(cycle)
-    , d_size(max(1,size/image_constant::TEXT_ZOOM_SIZE_PROP))
-    , d_cycle(max(1,cycle/image_constant::TEXT_ZOOM_CYCLE_PROP))
+    , d_size(max(1,size/TEXT_ZOOM_SIZE_PROP))
+    , d_cycle(max(1,cycle/TEXT_ZOOM_CYCLE_PROP))
     , cycle_count(0)
     , size_bigger(true)
     , size(size)

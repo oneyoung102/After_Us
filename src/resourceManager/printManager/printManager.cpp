@@ -1,7 +1,6 @@
 #include <SFML/Graphics.hpp>
 
 #include "printManager.hpp"
-#include "resourceManager/fileManager/fileManager.hpp"
 #include <vector>
 
 using namespace std;
@@ -9,18 +8,14 @@ using namespace sf;
 
 
 PrintManager::PrintManager()
-{
-    if(!shader.loadFromFile(FileManager::get_folder_path("Data")/"brightness.txt", sf::Shader::Type::Fragment))
-        throw runtime_error("file for shading doesn't exist");
-    shader.setUniform("brightness", image_constant::BRIGHTNESS);
-}
+{}
 
 void PrintManager::print_objects(RenderWindow& window)
 {
     for(int i = 0 ; i < __print_objects.size() ; )
         if(__print_objects[i]->is_alive())
         {
-            __print_objects[i]->print(window);
+            __print_objects[i]->print(window,shader);
             ++i;
         }
         else

@@ -7,7 +7,7 @@
 GamePage::GamePage(const FileManager& file_manager, WindowManager::ScreenSizeType screen_size)
     : world_manager(WorldManager(Camera()))
 {
-    print_manager.add_object(std::make_unique<PrintObject<WorldManager>>(world_manager,screen_size,file_manager.get_sprite(FileManager::Image::world_asset)));
+    print_manager.add_object(std::make_unique<PrintObject<WorldManager>>(file_manager.get_image_datas()[ImageDatas::Name::world],world_manager.get_world(),world_manager.get_camera(),screen_size));
 }
 
 PageSignal GamePage::proceed_page(FileManager& file_manager, sf::RenderWindow& window)
