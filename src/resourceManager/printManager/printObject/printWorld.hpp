@@ -1,6 +1,6 @@
 #pragma once
 
-#include "game/pages/gamePage/gameManager/world/worldManager.hpp"
+#include "game/pageManager/pages/gamePage/gameManager/worldManager/worldManager.hpp"
 
 #include "resourceManager/printManager/printObject/printObject.hpp"
 #include "resourceManager/printManager/shader/shader.hpp"
@@ -25,7 +25,7 @@ class PrintObject<WorldManager> : public PrintObjectInterface
                 return;
             const auto& sub_data = image_data[tile_code];
             const auto tex_pos = sub_data.pos();
-            const auto tex_size = sub_data.size(scale);
+            const auto tex_size = sub_data.size();
             sprite.setTextureRect(sf::IntRect({tex_pos.x, tex_pos.y}, {tex_size.x, tex_size.y})); 
             print_sprite(w,screen_pos,shader);
         }
@@ -39,10 +39,10 @@ class PrintObject<WorldManager> : public PrintObjectInterface
 
         void print(sf::RenderWindow& w, Shader& shader) override
         {
-            scale = 7.f/camera.get_altitude();
+            scale = 5.f/camera.get_altitude();
             sprite.setScale({scale,scale});
 
-            const auto scaled_tile_size = image_data[WorldImageData::CroppedImageName::GRASS_1].size(scale);
+            const auto scaled_tile_size = WorldImageData::TILE_SIZE.get(scale);
             const auto showed_world_size = tools::POSi(ceil(screen_size.x/scaled_tile_size.x),ceil(screen_size.y/scaled_tile_size.y));
             
             const auto camera_pos = camera.get_pos();

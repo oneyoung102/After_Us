@@ -76,7 +76,10 @@ class ImageDatas
 
 class WorldImageData : public ImageData
 {
+    private :
+        static constexpr tools::POSs UNSCALED_TILE_SIZE = {64,64};
     public :
+        static constexpr ImageSize TILE_SIZE{UNSCALED_TILE_SIZE};
         enum class CroppedImageName
         {
             VOID = -1,
@@ -88,10 +91,10 @@ class WorldImageData : public ImageData
         WorldImageData(sf::Texture&& texture)
             : ImageData(std::move(texture))
         {
-            add_cropped_image_data(CroppedImageName::GRASS_1, CroppedImageData({0,0}, {64,64}));
-            add_cropped_image_data(CroppedImageName::GRASS_2, CroppedImageData({64,0}, {64,64}));
-            add_cropped_image_data(CroppedImageName::GRASS_3, CroppedImageData({128,0}, {64,64}));
-            add_cropped_image_data(CroppedImageName::CULTIVATE, CroppedImageData({0,64}, {64,64}));
+            add_cropped_image_data(CroppedImageName::GRASS_1, CroppedImageData({0,0}, UNSCALED_TILE_SIZE));
+            add_cropped_image_data(CroppedImageName::GRASS_2, CroppedImageData({64,0}, UNSCALED_TILE_SIZE));
+            add_cropped_image_data(CroppedImageName::GRASS_3, CroppedImageData({128,0}, UNSCALED_TILE_SIZE));
+            add_cropped_image_data(CroppedImageName::CULTIVATE, CroppedImageData({0,64}, UNSCALED_TILE_SIZE));
         }  
         static constexpr ImageDatas::Name name = ImageDatas::Name::world;
 };

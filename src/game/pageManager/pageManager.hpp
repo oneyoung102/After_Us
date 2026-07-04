@@ -2,7 +2,7 @@
 
 #include <SFML/Graphics.hpp>
 #include "game/pageManager/pageSignal.hpp"
-#include "game/pages/page.hpp"
+#include "game/pageManager/pages/page.hpp"
 #include "main/windowManager/windowManager.hpp"
 #include "resourceManager/fileManager/fileManager.hpp"
 

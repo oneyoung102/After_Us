@@ -8,36 +8,50 @@
 #include <utility>
 #include <typeindex>
 
-class CroppedImageSize
+class ImageSize
 {
     private :
-        tools::POSi __size;
+        tools::POSs size;
     public :
-        CroppedImageSize() = default;
-        CroppedImageSize(const tools::POSi& size)
-            : __size(size)
-        {}
-        CroppedImageSize(tools::POSi&& size)
-            : __size(std::move(size))
-        {}
-        CroppedImageSize(int x, int y)
-            : __size(x, y)
-        {}
-        tools::POSi size(float scale) const {return __size*scale;}
+        constexpr ImageSize() = default;
+        constexpr ImageSize(const tools::POSs& size)
+            : size(size)
+        {
+            if(size.x < 0 || size.y < 0)
+                throw std::runtime_error("CroppedImageSize size is less than 0");
+        }
+        constexpr ImageSize(tools::POSs&& size)
+            : size(std::move(size))
+        {
+            if(size.x < 0 || size.y < 0)
+                throw std::runtime_error("CroppedImageSize size is less than 0");
+        }
+        constexpr ImageSize(int x, int y)
+            : size(x, y)
+        {
+            if(x <= 0 || y <= 0)
+                throw std::runtime_error("CroppedImageSize size is less than 0");
+        }
+        constexpr tools::POSs get(float scale = 1.0) const
+        {
+            if(scale <= 0)
+                throw std::runtime_error("CroppedImageSize scale is less than 0");
+            return size*scale;
+        }
 };
 
 class CroppedImageData
 {
     private :
         tools::POSi __pos;
-        CroppedImageSize __size;
+        ImageSize __size;
     public :
         CroppedImageData() = default;
-        CroppedImageData(tools::POSi&& pos, CroppedImageSize&& size)
+        CroppedImageData(tools::POSi&& pos, ImageSize&& size)
             : __pos(std::move(pos))
             , __size(std::move(size))
         {};
-        CroppedImageData(const tools::POSi& pos, const CroppedImageSize& size)
+        CroppedImageData(const tools::POSi& pos, const ImageSize& size)
             : __pos(pos)
             , __size(size)
         {};
@@ -48,7 +62,7 @@ class CroppedImageData
             return *this;
         }
         tools::POSi pos() const {return __pos;}
-        tools::POSi size(float scale) const {return __size.size(scale);}
+        tools::POSi size(float scale = 1.0) const {return __size.get(scale);}
 };
 
 

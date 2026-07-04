@@ -1,6 +1,6 @@
 #include "game/pageManager/pageManager.hpp"
-#include "game/pages/gamePage/gamePage.hpp"
-#include "game/pages/page.hpp"
+#include "game/pageManager/pages/gamePage/gamePage.hpp"
+#include "game/pageManager/pages/page.hpp"
 #include "game/pageManager/pageSignal.hpp"
 
 #include <SFML/Graphics.hpp>

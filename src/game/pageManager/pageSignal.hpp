@@ -1,6 +1,6 @@
 #pragma once
 
-#include "game/pages/page.hpp"
+#include "game/pageManager/pages/page.hpp"
 #include <optional>
 
 
