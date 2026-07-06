@@ -40,42 +40,19 @@ class ImageSize
         }
 };
 
-class CroppedImageData
-{
-    private :
-        tools::POSi __pos;
-        ImageSize __size;
-    public :
-        CroppedImageData() = default;
-        CroppedImageData(tools::POSi&& pos, ImageSize&& size)
-            : __pos(std::move(pos))
-            , __size(std::move(size))
-        {};
-        CroppedImageData(const tools::POSi& pos, const ImageSize& size)
-            : __pos(pos)
-            , __size(size)
-        {};
-        CroppedImageData& operator=(const CroppedImageData& sub_image_data)
-        {
-            __pos = sub_image_data.__pos;
-            __size = sub_image_data.__size;
-            return *this;
-        }
-        tools::POSi pos() const {return __pos;}
-        tools::POSi size(float scale = 1.0) const {return __size.get(scale);}
-};
-
 
 class ImageDataInterface
 {
     private :
         const sf::Texture texture;
-        std::vector<CroppedImageData> cropped_image_datas;
+        const ImageSize cropped_size;
+        std::vector<tools::POSi> cropped_image_datas;
+
         std::type_index enum_type;
         bool has_enum_type;
     protected :
         template<typename T>
-        void add_cropped_image_data(T cropped_image_name, CroppedImageData&& sub_image_data)
+        void add_cropped_image_data(T cropped_image_name, tools::POSi&& cropped_image_pos)
         {
             if(std::is_void<T>::value)
                 throw std::runtime_error("there is no CroppedImageName in the image, but tried to add its data");
@@ -92,11 +69,12 @@ class ImageDataInterface
             
             if(cropped_image_datas.size() != tools::CASTs(T::COUNT))
                 cropped_image_datas.resize(tools::CASTs(T::COUNT));
-            cropped_image_datas[tools::CASTs(cropped_image_name)] = std::move(sub_image_data);
+            cropped_image_datas[tools::CASTs(cropped_image_name)] = std::move(cropped_image_pos*cropped_size.get());
         }
     public :
-        ImageDataInterface(sf::Texture&& texture)
+        ImageDataInterface(sf::Texture&& texture, const ImageSize& cropped_size)
             : texture(std::move(texture))
+            , cropped_size(cropped_size)
             , enum_type(typeid(void))
             , has_enum_type(false)
         {}
@@ -107,8 +85,10 @@ class ImageDataInterface
             return sf::Sprite(texture);
         }
 
+        tools::POSi size(float scale = 1.0) const {return cropped_size.get(scale);}
+
         template<typename T>
-        const CroppedImageData& operator[](T idx) const
+        const tools::POSi& operator[](T idx) const
         {
             if(std::is_void<T>::value)
                 throw std::runtime_error("there is no CroppedImageName in the image, but tried to get it");
@@ -123,7 +103,7 @@ class ImageDataInterface
 class ImageData : public ImageDataInterface
 {
     public:
-        ImageData(sf::Texture&& tex)
-            : ImageDataInterface(std::move(tex))
+        ImageData(sf::Texture&& tex, const ImageSize& cropped_size)
+            : ImageDataInterface(std::move(tex), cropped_size)
         {}
 };

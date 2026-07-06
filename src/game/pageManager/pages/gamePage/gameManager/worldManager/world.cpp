@@ -38,7 +38,7 @@ World::TILE& World::operator[](tools::POSs&& pos)
 }
 World::TILE& World::operator[](const tools::POSs& pos)
 {
-    if(in(pos))
+    if(!in(pos))
         throw std::runtime_error("out of World");
     return world[pos.r][pos.c].first;
 }
@@ -50,7 +50,7 @@ const World::TILE& World::operator[](tools::POSs&& pos) const
 }
 const World::TILE& World::operator[](const tools::POSs& pos) const
 {
-    if(in(pos))
+    if(!in(pos))
         throw std::runtime_error("out of World");
     return world[pos.r][pos.c].first;
 }
@@ -64,7 +64,7 @@ int World::get_height(tools::POSs&& pos) const
 
 int World::get_height(const tools::POSs& pos) const
 {
-    if(in(pos))
+    if(!in(pos))
         throw std::runtime_error("out of World");
     return world[pos.r][pos.c].second;
 }

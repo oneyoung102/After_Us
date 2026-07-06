@@ -1,25 +1,30 @@
 #include "camera.hpp"
 
-Camera::Camera(std::shared_ptr<Thing> thing)
-    : MovingThing(thing ? thing->get_pos() : tools::POSf(0.f, 0.f), 0)
-    , tracing_thing(thing)
+Camera::Camera(std::shared_ptr<Entity> entity)
+    : MovingEntity(entity ? entity->get_pos() : tools::POSf(0.f, 0.f), 0)
+    , tracing_entity(entity)
 {
     set_altitude();
 }
 
 tools::POSf Camera::get_pos() const
 {
-    if(tracing_thing.lock())
-        return tracing_thing.lock()->get_pos();
     return pos;
 }
 
-void Camera::trace(std::shared_ptr<Thing> thing)
+void Camera::target(std::shared_ptr<Entity> entity)
 {
-    tracing_thing = thing;
-    pos = tracing_thing.lock()->get_pos();
+    tracing_entity = entity;
+    if(auto target = tracing_entity.lock())
+        pos = target->get_pos();
 }
-void Camera::untrace() {tracing_thing.reset();}
+void Camera::untarget() {tracing_entity.reset();}
+
+void Camera::trace()
+{
+    if(auto target = tracing_entity.lock())
+        pos += (target->get_pos() - pos)/16;
+}
 
 void Camera::rise(float altitude)
 {
@@ -33,4 +38,4 @@ void Camera::set_altitude(float altitude)
 
 float Camera::get_altitude() const {return altitude;}
 
-bool Camera::is_tracing() const {return !tracing_thing.expired();}
+bool Camera::has_target() const {return !tracing_entity.expired();}

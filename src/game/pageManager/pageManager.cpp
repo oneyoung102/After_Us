@@ -14,13 +14,12 @@ void PageManager::change_page(Page::Name page_name)
     switch(page_name)
     {
         case Page::Name::game :
-            curr_page = make_unique<GamePage>(file_manager, screen_size);
+            curr_page = make_unique<GamePage>(file_manager);
     }
 }
 
-PageManager::PageManager(WindowManager::ScreenSizeType screen_size)
+PageManager::PageManager()
     : signal{}
-    , screen_size(screen_size)
 {
     signal.next_page = Page::Name::game;
     change_page(*signal.next_page);
@@ -35,8 +34,10 @@ void PageManager::show_page(WindowManager& window_manager)
         if(event->is<Event::Closed>())
             window_manager.close();
         window_manager.resize_window(event);
-        curr_page->get_let_manager().act_keyboard_let(event);
+        curr_page->get_let_manager().act_event_let(event);
     }
+    curr_page->get_let_manager().act_state_let();
+    
     window_manager.clear();
     signal = curr_page->proceed_page(file_manager, window_manager.get_window());
     window_manager.set_view();

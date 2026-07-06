@@ -1,30 +1,60 @@
 #include "main/windowManager/windowManager.hpp"
+#include "main/windowManager/tick.hpp"
 #include "tools/cast.hpp"
+
+WindowManager::ScreenSizeType WindowManager::screen_size;
+WindowManager::ScreenSizeType WindowManager::screen_center;
 
 WindowManager::WindowManager(std::string&& name)
     : videoMode(sf::VideoMode::getDesktopMode())
     , window(videoMode, std::move(name))
-    , screen_size(tools::POSf(videoMode.size.x,videoMode.size.y))
-    , screen_center(screen_size/2)
-    , ratio(screen_size.x/fmax(screen_size.y,1))
     , capture_sprite(sf::Sprite(capture_texture))
 {
+    screen_size = tools::POSf(videoMode.size.x, videoMode.size.x / ratio);
+    screen_center = screen_size / 2.f;
+    
     view = sf::View(sf::FloatRect({0.f, 0.f}, {screen_size.x, screen_size.y}));
+    view.setViewport(get_resized_viewport(window.getSize()));
     set_view();
-
-    set_frame_rate_limit(120);
+    window.setFramerateLimit(Tick::FRAMERATE);
 }
 
 WindowManager::ScreenSizeType WindowManager::get_screen_size() {return screen_size;}
 WindowManager::ScreenSizeType WindowManager::get_screen_center() {return screen_center;}
 
-
-sf::FloatRect WindowManager::get_resized_window(const sf::Event::Resized* resize)
+float WindowManager::get_scale(const Camera& camera)
 {
-    if(!resize)
-        throw std::runtime_error("No resize event! in windowResize()");
+    const float base_width = 1470.f;
+    const float current_width = WindowManager::get_screen_size().x;
+    return (current_width / base_width) * (5.f / camera.get_altitude());
+}
+tools::POSf WindowManager::get_pixel_world_origin(const Camera& camera)
+{
+    return (WindowManager::get_screen_size() / 2.f) - (camera.get_pos() * WorldImageData::TILE_SIZE.get(WindowManager::get_scale(camera)));
+}
+tools::POSs WindowManager::get_pixel_world_size(const Camera& camera)
+{
+    const auto screen_size = WindowManager::get_screen_size();
+    const auto scaled_tile_size = WorldImageData::TILE_SIZE.get(WindowManager::get_scale(camera));
+    return tools::POSi(ceil(screen_size.x/scaled_tile_size.x),ceil(screen_size.y/scaled_tile_size.y));
+}
+tools::POSf WindowManager::pixel_pos_to_world_pos(const tools::POSf& pixel_pos, const Camera& camera)
+{
+    const auto world_origin_in_screen = get_pixel_world_origin(camera);
+    const auto scaled_tile_size = WorldImageData::TILE_SIZE.get(WindowManager::get_scale(camera));
+    return (pixel_pos - world_origin_in_screen) / scaled_tile_size;
+}
+tools::POSf WindowManager::world_pos_to_pixel_pos(const tools::POSf& world_pos, const Camera& camera)
+{
+    const auto world_origin_in_screen = get_pixel_world_origin(camera);
+    const auto scaled_tile_size = WorldImageData::TILE_SIZE.get(WindowManager::get_scale(camera));
+    return world_origin_in_screen + world_pos * scaled_tile_size;
+}
 
-    const float windowRatio = tools::CASTf(resize->size.x) / fmax(tools::CASTf(resize->size.y),1);
+
+sf::FloatRect WindowManager::get_resized_viewport(const sf::Vector2u& window_size)
+{
+    const float windowRatio = tools::CASTf(window_size.x) / fmax(tools::CASTf(window_size.y), 1.0f);
 
     float viewportWidth = 1.f, viewportHeight = 1.f, viewportX = 0.f, viewportY = 0.f;
 
@@ -39,6 +69,14 @@ sf::FloatRect WindowManager::get_resized_window(const sf::Event::Resized* resize
         viewportY = (1.f - viewportHeight) / 2.f;
     }
     return sf::FloatRect({viewportX, viewportY}, {viewportWidth, viewportHeight});
+}
+
+sf::FloatRect WindowManager::get_resized_window(const sf::Event::Resized* resize)
+{
+    if(!resize)
+        throw std::runtime_error("No resize event! in windowResize()");
+
+    return get_resized_viewport(resize->size);
 }
 
 const decltype(WindowManager::window)& WindowManager::get_window() const
@@ -79,10 +117,6 @@ void WindowManager::display()
     window.display();
 }
 
-void WindowManager::set_frame_rate_limit(unsigned int frameRate)
-{
-    window.setFramerateLimit(frameRate);
-}
 
 std::optional<sf::Event> WindowManager::poll_event()
 {

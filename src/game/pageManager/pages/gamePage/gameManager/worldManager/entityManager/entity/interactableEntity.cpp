@@ -1,5 +1,5 @@
-#include "interactableThing.hpp"
+#include "interactableEntity.hpp"
 
-InteractableThing::InteractableThing(const tools::POSf& pos, unsigned int size)
-    : Thing(pos, size)
+InteractableEntity::InteractableEntity(const tools::POSf& pos, unsigned int size)
+    : Entity(pos, size)
 {} 

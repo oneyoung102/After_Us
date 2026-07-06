@@ -1,32 +1,38 @@
-#include "thing.hpp"
+#include "entity.hpp"
 
-Thing::Thing(const tools::POSf& pos, const unsigned int size)
+Entity::Entity(const tools::POSf& pos, float size)
     : pos(pos)
-    , size(size)
-    , thing_code(UNREGISTERED)
-{}
+    , entity_code(UNREGISTERED)
+{
+    set_size(size);
+}
 
-tools::POSf Thing::get_pos() const {return pos;}
-unsigned int Thing::get_size() const {return size;}
+tools::POSf Entity::get_pos() const {return pos;}
+float Entity::get_size() const {return size;}
 
-void Thing::set_pos(const tools::POSf& pos){this->pos = pos;}
-void Thing::set_pos(const tools::POSf&& pos){this->pos = std::move(pos);}
-void Thing::set_size(unsigned int size){this->size = size;}
+void Entity::set_pos(const tools::POSf& pos){this->pos = pos;}
+void Entity::set_pos(const tools::POSf&& pos){this->pos = std::move(pos);}
+void Entity::set_size(float size)
+{
+    if(size < 0)
+        throw std::runtime_error("entity size is less than 0");
+    this->size = size;
+}
 
-World::TILE Thing::get_curr_tile(const World& world) const
+World::TILE Entity::get_curr_tile(const World& world) const
 {
     return world[tools::POSs(pos)];
 }
-int Thing::get_curr_height(const World& world) const
+int Entity::get_curr_height(const World& world) const
 {
     return world.get_height(tools::POSs(pos));
 }
 
-bool Thing::is_registered() const {return thing_code != UNREGISTERED;}
-Thing::THING_CODE Thing::get_thing_code() const {return thing_code;}
-void Thing::set_thing_code(Thing::THING_CODE thing_code)
+bool Entity::is_registered() const {return entity_code != UNREGISTERED;}
+Entity::ENTITY_CODE Entity::get_entity_code() const {return entity_code;}
+void Entity::set_entity_code(Entity::ENTITY_CODE entity_code)
 {
     if(is_registered())
-        throw std::runtime_error("thing is already registered");
-    this->thing_code = thing_code;
+        throw std::runtime_error("entity is already registered");
+    this->entity_code = entity_code;
 }

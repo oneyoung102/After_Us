@@ -1,5 +1,6 @@
 #pragma once
 
+#include "game/pageManager/pages/gamePage/gameManager/worldManager/entityManager/entity/entities/camera/camera.hpp"
 #include "tools/pos.hpp"
 #include <string>
 #include <SFML/Graphics.hpp>
@@ -11,8 +12,8 @@ class WindowManager
     private :
         sf::VideoMode videoMode;
 
-        const ScreenSizeType screen_size, screen_center;
-        const float ratio;
+        static ScreenSizeType screen_size, screen_center;
+        static constexpr float ratio = 16.0f / 9.0f; // 가로 세로 비율 (16:9)
         
         sf::RenderWindow window;
         sf::View view;
@@ -20,12 +21,19 @@ class WindowManager
         sf::Texture capture_texture;
         sf::Sprite capture_sprite;
 
+        sf::FloatRect get_resized_viewport(const sf::Vector2u& window_size);
         sf::FloatRect get_resized_window(const sf::Event::Resized* resize);
     public :
         WindowManager(std::string&& name);
 
-        ScreenSizeType get_screen_size();
-        ScreenSizeType get_screen_center();
+        static ScreenSizeType get_screen_size();
+        static ScreenSizeType get_screen_center();
+
+        static float get_scale(const Camera& camera);
+        static tools::POSf get_pixel_world_origin(const Camera& camera);
+        static tools::POSs get_pixel_world_size(const Camera& camera);
+        static tools::POSf pixel_pos_to_world_pos(const tools::POSf& pixel_pos, const Camera& camera);
+        static tools::POSf world_pos_to_pixel_pos(const tools::POSf& world_pos, const Camera& camera);
 
         const decltype(window)& get_window() const;
         decltype(window)& get_window();
@@ -37,8 +45,6 @@ class WindowManager
         void close();
         bool is_open() const;
         void display();
-
-        void set_frame_rate_limit(unsigned int frame_rate);
 
         std::optional<sf::Event> poll_event();
 

@@ -1,17 +1,19 @@
 #pragma once
 
 #include "game/pageManager/pages/gamePage/gameManager/worldManager/world.hpp"
-#include "game/pageManager/pages/gamePage/gameManager/worldManager/thingManager/thingManager.hpp"
-#include "game/pageManager/pages/gamePage/gameManager/worldManager/thingManager/thing/things/camera.hpp"
+#include "game/pageManager/pages/gamePage/gameManager/worldManager/entityManager/entityManager.hpp"
+#include "game/pageManager/pages/gamePage/gameManager/worldManager/entityManager/entity/entities/camera/camera.hpp"
 
 class WorldManager
 {
     private :
+        constexpr static int ONE_DAY = 60*60*24;
+        Tick time;
         World world;
-        ThingManager thing_manager;
+        EntityManager entity_manager;
         Camera camera;
     public :
-        WorldManager(Camera&& camera);
+        WorldManager(Tick time, Camera&& camera);
 
         const World& get_world() const;
         World& get_world();
@@ -19,8 +21,8 @@ class WorldManager
         const Camera& get_camera() const;
         Camera& get_camera(); 
 
-        const ThingManager& get_thing_manager() const;
-        ThingManager& get_thing_manager();
+        const EntityManager& get_entity_manager() const;
+        EntityManager& get_entity_manager();
 
-        void testCameraMove() {camera.move(camera.get_pos()+tools::POSf(0.03f,0.03f));}
+        void update(); // entityManager의 모든 업데이트와 카메라 trace를 포함
 };

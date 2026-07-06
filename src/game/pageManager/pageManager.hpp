@@ -16,11 +16,9 @@ class PageManager
         std::unique_ptr<Page> curr_page;
         PageSignal signal;
 
-        const WindowManager::ScreenSizeType screen_size;
-
         void change_page(Page::Name page_name);
     public :
-        PageManager(WindowManager::ScreenSizeType screen_size);
+        PageManager();
         void show_page(WindowManager& window_manager);
 
 };

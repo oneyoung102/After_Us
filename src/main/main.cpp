@@ -4,12 +4,11 @@
 #include <stdexcept>
 #include "game/pageManager/pageManager.hpp"
 #include "main/windowManager/windowManager.hpp"
-#include "resourceManager/fileManager/fileManager.hpp"
     
 int main()
 {   
     WindowManager window_manager("After Us");
-    PageManager page_manager(window_manager.get_screen_size());
+    PageManager page_manager;
     while(window_manager.is_open())
     {
         try

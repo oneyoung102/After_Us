@@ -1,23 +1,28 @@
 #pragma once
 
-#include "game/pageManager/pages/gamePage/gameManager/worldManager/thingManager/thing/thing.hpp"
+#include "game/pageManager/pages/gamePage/gameManager/worldManager/entityManager/entity/entity.hpp"
 #include "game/pageManager/pages/gamePage/gameManager/worldManager/world.hpp"
-#include "tools/dir.hpp"
 
-class MovingThing : public Thing
+class MovingEntity : public Entity
 {
-    private :
+    protected :
+        static constexpr float DEFAULT_SPEED = 3.0f/128.0f;
         float speed;
         unsigned int threshold_height;
     public :
-        MovingThing(const tools::POSf& pos, unsigned int size = 1, float speed = 0.125, unsigned int threshold_height = 1);
-        virtual ~MovingThing() = default;
+        MovingEntity(const tools::POSf& pos, unsigned int size = 1, float speed = DEFAULT_SPEED, unsigned int threshold_height = 1);
+        virtual ~MovingEntity() = default;
 
         float get_speed() const;
         void set_speed(float speed);
 
         void move(const tools::POSf& pos);
         void move(tools::POSf&& pos);
+        void move_minimum_distance(const tools::POSf& pos) = delete;
+        bool movable(const World& world, const tools::POSf& pos);
 
-        bool movable(const World& world, tools::Direction dir);
+        void move_left();
+        void move_right();
+        void move_up();
+        void move_down();
 };
