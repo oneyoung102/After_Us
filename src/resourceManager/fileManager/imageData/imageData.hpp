@@ -44,13 +44,13 @@ class ImageSize
 class ImageDataInterface
 {
     private :
-        const sf::Texture texture;
-        const ImageSize cropped_size;
-        std::vector<tools::POSi> cropped_image_datas;
-
         std::type_index enum_type;
         bool has_enum_type;
     protected :
+        const sf::Texture texture;
+        const ImageSize cropped_size;
+        std::vector<tools::POSi> cropped_image_datas;
+        
         template<typename T>
         void add_cropped_image_data(T cropped_image_name, tools::POSi&& cropped_image_pos)
         {

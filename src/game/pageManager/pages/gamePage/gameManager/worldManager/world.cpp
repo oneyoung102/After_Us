@@ -2,7 +2,7 @@
 #include <stdexcept>
 
 World::World()
-    : world(WORLD_TYPE(1000, std::vector<ELEMENT_TYPE>(1000, {WorldImageData::CroppedImageName::GRASS_1, 0})))
+    : world(WORLD_TYPE(1000, std::vector<ELEMENT_TYPE>(1000, {Tile::GRASS_1, 0})))
     , world_size(tools::POSs(1000, 1000))
 {}
 
@@ -30,25 +30,25 @@ bool World::in(const tools::POSs& pos) const
     return tools::POSs() <= pos && pos < world_size;
 }
 
-World::TILE& World::operator[](tools::POSs&& pos)
+World::Tile& World::operator[](tools::POSs&& pos)
 {
     if(!in(std::move(pos)))
         throw std::runtime_error("out of World");
     return world[pos.r][pos.c].first;
 }
-World::TILE& World::operator[](const tools::POSs& pos)
+World::Tile& World::operator[](const tools::POSs& pos)
 {
     if(!in(pos))
         throw std::runtime_error("out of World");
     return world[pos.r][pos.c].first;
 }
-const World::TILE& World::operator[](tools::POSs&& pos) const
+const World::Tile& World::operator[](tools::POSs&& pos) const
 {
     if(!in(std::move(pos)))
         throw std::runtime_error("out of World");
     return world[pos.r][pos.c].first;
 }
-const World::TILE& World::operator[](const tools::POSs& pos) const
+const World::Tile& World::operator[](const tools::POSs& pos) const
 {
     if(!in(pos))
         throw std::runtime_error("out of World");

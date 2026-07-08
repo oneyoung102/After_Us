@@ -6,7 +6,7 @@ WorldManager::WorldManager(Tick time, Camera&& camera)
     , camera(std::move(camera))
 {
     //world = ; 여기서 파일에서 월드 불러오기
-    entity_manager = EntityManager(world);
+    entity_manager = EntityManager(world,{}); // {} : entities에 플레이어도 포함
 }
 
 const World& WorldManager::get_world() const {return world;}
@@ -18,3 +18,9 @@ Camera& WorldManager::get_camera(){return camera;}
 
 const EntityManager& WorldManager::get_entity_manager() const {return entity_manager;}
 EntityManager& WorldManager::get_entity_manager(){return entity_manager;}
+
+void WorldManager::update()
+{
+    entity_manager.update(*this);
+    camera.trace();
+}

@@ -1,5 +1,6 @@
 #include "main/windowManager/windowManager.hpp"
 #include "main/windowManager/tick.hpp"
+#include "resourceManager/fileManager/imageData/imageDatas.hpp"
 #include "tools/cast.hpp"
 
 WindowManager::ScreenSizeType WindowManager::screen_size;
@@ -26,7 +27,7 @@ float WindowManager::get_scale(const Camera& camera)
 {
     const float base_width = 1470.f;
     const float current_width = WindowManager::get_screen_size().x;
-    return (current_width / base_width) * (5.f / camera.get_altitude());
+    return (current_width / base_width) * (6.5 / camera.get_altitude());
 }
 tools::POSf WindowManager::get_pixel_world_origin(const Camera& camera)
 {
@@ -49,6 +50,26 @@ tools::POSf WindowManager::world_pos_to_pixel_pos(const tools::POSf& world_pos, 
     const auto world_origin_in_screen = get_pixel_world_origin(camera);
     const auto scaled_tile_size = WorldImageData::TILE_SIZE.get(WindowManager::get_scale(camera));
     return world_origin_in_screen + world_pos * scaled_tile_size;
+}
+std::pair<tools::POSf,tools::POSf> WindowManager::get_displayed_world_range(const World& world, const Camera& camera)
+{
+    const auto scaled_tile_size = WorldImageData::TILE_SIZE.get(get_scale(camera));
+    const auto pixel_world_size = get_pixel_world_size(camera);
+    
+    const auto camera_pos = camera.get_pos();
+    const auto world_origin_in_screen = get_pixel_world_origin(camera);
+
+    const auto world_size = world.get_size();
+
+    auto start = tools::POSf(
+        std::fmax(0, tools::CASTf(floor(camera_pos.x - pixel_world_size.x / 2.f))),
+        std::fmax(0, tools::CASTf(floor(camera_pos.y - pixel_world_size.y / 2.f)))
+    );
+    auto end = tools::POSf(
+        std::fmin(tools::CASTf(world_size.c), tools::CASTf(ceil(camera_pos.x + pixel_world_size.x / 2.f))),
+        std::fmin(tools::CASTi(world_size.r), tools::CASTi(ceil(camera_pos.y + pixel_world_size.y / 2.f)))
+    );
+    return {start,end};
 }
 
 

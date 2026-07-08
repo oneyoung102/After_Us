@@ -22,14 +22,14 @@ class Entity
         Entity(const tools::POSf& pos, float size = 1.f);
         virtual ~Entity() = default;
 
-        virtual tools::POSf get_pos() const;
+        tools::POSf get_pos() const;
         float get_size() const;
 
         void set_pos(const tools::POSf& pos);
         void set_pos(const tools::POSf&& pos);
         void set_size(float size);
 
-        World::TILE get_curr_tile(const World& world) const;
+        World::Tile get_curr_tile(const World& world) const;
         int get_curr_height(const World& world) const;
 
         bool is_registered() const;
@@ -39,5 +39,15 @@ class Entity
         virtual EntityName get_name() const = 0;
 
         inline bool operator==(const Entity& entity) const {return entity_code == entity.entity_code;}
+
+        virtual bool is_camera() const {return false;}
+        virtual bool is_creature() const {return false;}
+        virtual bool is_fallen_item() const {return false;}
+        virtual bool is_player() const {return false;}
+        virtual bool is_interactable_entity() const {return false;}
+        virtual bool is_moving_entity() const {return false;}
+
+        bool is_dynamic_entity() const {return is_interactable_entity() || is_moving_entity();}
+        bool is_static_entity() const {return !is_dynamic_entity();}
 };
 

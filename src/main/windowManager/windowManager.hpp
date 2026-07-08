@@ -34,6 +34,7 @@ class WindowManager
         static tools::POSs get_pixel_world_size(const Camera& camera);
         static tools::POSf pixel_pos_to_world_pos(const tools::POSf& pixel_pos, const Camera& camera);
         static tools::POSf world_pos_to_pixel_pos(const tools::POSf& world_pos, const Camera& camera);
+        static std::pair<tools::POSf,tools::POSf> get_displayed_world_range(const World& world, const Camera& camera);
 
         const decltype(window)& get_window() const;
         decltype(window)& get_window();

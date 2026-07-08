@@ -8,4 +8,5 @@ class InteractableEntity : public Entity
     public :
         InteractableEntity(const tools::POSf& pos, unsigned int size = 1);
         virtual ~InteractableEntity() = default;
+        virtual bool is_interactable_entity() const override {return true;}
 };

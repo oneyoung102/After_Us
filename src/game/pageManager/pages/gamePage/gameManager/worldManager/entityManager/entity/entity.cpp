@@ -19,7 +19,7 @@ void Entity::set_size(float size)
     this->size = size;
 }
 
-World::TILE Entity::get_curr_tile(const World& world) const
+World::Tile Entity::get_curr_tile(const World& world) const
 {
     return world[tools::POSs(pos)];
 }

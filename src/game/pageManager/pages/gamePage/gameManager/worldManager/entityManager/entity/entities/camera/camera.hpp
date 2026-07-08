@@ -2,6 +2,7 @@
 
 #include "game/pageManager/pages/gamePage/gameManager/worldManager/entityManager/entity/movingEntity.hpp"
 #include "game/pageManager/pages/gamePage/gameManager/worldManager/entityManager/entity/entity.hpp"
+#include <memory>
 
 class Camera : public MovingEntity
 {
@@ -17,8 +18,6 @@ class Camera : public MovingEntity
 
         void trace();
 
-        virtual tools::POSf get_pos() const override;
-
         void rise(float altitude);
         void set_altitude(float altitude = INITIAL_ALTITUDE);
         float get_altitude() const;
@@ -26,4 +25,6 @@ class Camera : public MovingEntity
         bool has_target() const;
 
         virtual EntityName get_name() const override { return EntityName::camera; }
+
+        virtual bool is_camera() const override {return true;}
 };

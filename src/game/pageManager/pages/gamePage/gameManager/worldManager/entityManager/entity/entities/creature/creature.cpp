@@ -1,4 +1,6 @@
 #include "creature.hpp"
+#include "tools/cast.hpp"
+#include "tools/hasWHAT.hpp"
 
 Creature::Creature(const tools::POSf& pos,
             float size,
@@ -11,13 +13,23 @@ Creature::Creature(const tools::POSf& pos,
             float attack_distance,
             float notice_distance)
     : MovingEntity(pos, size, speed, threshold_height)
+    , foot_state(FootState::stop)
 {
+    static_assert(tools::has_count<MovingState>(), "MovingState has no COUNT");
     set_max_health(max_health);
     set_health(health);
     set_power(power);
     set_time_for_attack(time_for_attack);
     set_attack_distance(attack_distance);
     set_notice_distance(notice_distance);
+}
+
+Creature::MovingState Creature::get_moving_state() const
+{
+    return static_cast<MovingState>(
+              tools::CASTs(get_direction())
+            * tools::CASTs(FootState::COUNT)
+            + tools::CASTs(foot_state));
 }
 
 bool Creature::is_alive() const {return health > 0;}
@@ -84,5 +96,5 @@ bool Creature::attackable(std::weak_ptr<const Creature> entity) const
 }
 void Creature::attack(std::weak_ptr<Creature> entity) const {entity.lock()->add_health(power);}
 
-void Creature::target(std::shared_ptr<Creature> target){ __target = target;}
+void Creature::target(std::shared_ptr<const Creature> target){ __target = target;}
 void Creature::untarget(){ __target.reset();}

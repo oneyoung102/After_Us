@@ -2,6 +2,7 @@
 
 #include "game/pageManager/pages/gamePage/gameManager/worldManager/entityManager/entity/movingEntity.hpp"
 #include "main/windowManager/tick.hpp"
+#include <memory>
 
 class Creature : public MovingEntity
 {
@@ -15,6 +16,15 @@ class Creature : public MovingEntity
 
         float notice_distance;
         
+        enum class FootState
+        {
+            stop,
+            left_foot,
+            right_foot,
+            COUNT
+        };
+        FootState foot_state;
+        
     public :
         Creature(const tools::POSf& pos,
             float size,
@@ -27,6 +37,16 @@ class Creature : public MovingEntity
             float attack_distance,
             float notice_distance);
         virtual ~Creature() = default;
+        
+        enum class MovingState
+        {
+            DOWN_1, DOWN_2, DOWN_3,
+            UP_1, UP_2, UP_3,
+            RIGHT_1, RIGHT_2, RIGHT_3,
+            LEFT_1, LEFT_2, LEFT_3,
+            COUNT
+        };
+        MovingState get_moving_state() const;
 
         bool is_alive() const;
 
@@ -53,6 +73,8 @@ class Creature : public MovingEntity
         bool attackable(std::weak_ptr<const Creature> entity) const;
         void attack(std::weak_ptr<Creature> entity) const;
 
-        void target(std::shared_ptr<Creature> target);
+        void target(std::shared_ptr<const Creature> target);
         void untarget();
+
+        virtual bool is_creature() const override {return true;}
 };

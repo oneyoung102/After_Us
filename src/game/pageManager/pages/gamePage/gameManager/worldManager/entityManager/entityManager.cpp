@@ -1,24 +1,29 @@
 #include "entityManager.hpp"
 #include "game/letManager/letManager.hpp"
-#include "game/pageManager/pages/gamePage/gameManager/worldManager/entityManager/entity/entities/creature/creature.hpp"
-#include "game/pageManager/pages/gamePage/gameManager/worldManager/entityManager/entity/entities/fallenItem/fallenItem.hpp"
+#include "game/pageManager/pages/gamePage/gameManager/worldManager/entityManager/entity/entities/camera/camera.hpp"
+#include "game/pageManager/pages/gamePage/gameManager/worldManager/worldManager.hpp"
+#include "main/windowManager/windowManager.hpp"
+#include "tools/cast.hpp"
 #include <cmath>
+#include <memory>
 
-EntityManager::EntityManager(const World& world)
+EntityManager::EntityManager(const World& world, std::vector<std::unique_ptr<Entity>>&& entities)
     : chunks(
-        std::ceil(world.get_size().r / tools::CASTf(CHUNK_SIZE)),
-        std::vector<ONE_CHUNK_TYPE>(std::ceil(world.get_size().c/tools::CASTf(CHUNK_SIZE)),
-        ONE_CHUNK_TYPE(CHUNK_SIZE))
+        std::ceil(world.get_size().r / tools::CASTf(Chunk::CHUNK_SIZE)),
+        std::vector<Chunk>(std::ceil(world.get_size().c/tools::CASTf(Chunk::CHUNK_SIZE)))
     )
 {
-    available_entity_codes.fill(Entity::UNREGISTERED+1);
+    available_entity_code = Entity::UNREGISTERED;
+
+    for(auto& entity : entities)
+        register_entity(std::move(entity));
 }
 
-EntityManager::ONE_CHUNK_TYPE& EntityManager::get_chunk(const tools::POSs& pos)
+Chunk& EntityManager::get_chunk(const tools::POSs& pos)
 {
     return chunks[pos.r][pos.c];
 }
-const EntityManager::ONE_CHUNK_TYPE& EntityManager::get_chunk(const tools::POSs& pos) const
+const Chunk& EntityManager::get_chunk(const tools::POSs& pos) const
 {
     return chunks[pos.r][pos.c];
 }
@@ -27,124 +32,99 @@ tools::POSs EntityManager::get_chunks_size() const
     return tools::POSs(chunks.size(), chunks[0].size());
 }
 
-void EntityManager::register_entity(std::shared_ptr<Entity>&& entity)
+void EntityManager::register_entity(std::shared_ptr<Entity> entity)
 {
     if(entity->is_registered())
         throw std::runtime_error("entity is already registered");
-    const int idx = tools::CASTs(entity->get_name());
-    entity->set_entity_code(available_entity_codes[idx]++);
-
-    const auto chunk_pos = get_chunk_pos(entity);
-    const auto row_in_chunk = get_row_in_chunk(entity);
-    chunks[chunk_pos.r][chunk_pos.c].at(row_in_chunk).push_back(entity.get());
+    entity->set_entity_code(++available_entity_code);
 
     if(auto p = std::dynamic_pointer_cast<Player>(entity))
-        player = std::move(p);
-    else if(auto creature = std::dynamic_pointer_cast<Creature>(entity))
-        creatures.push_back(std::move(creature));
-    else if(auto fallen_item = std::dynamic_pointer_cast<FallenItem>(entity))
-        fallen_items.push_back(std::move(fallen_item));
-    else if(auto thing = std::dynamic_pointer_cast<Thing>(entity))
-        things.push_back(std::move(thing));
-    else
-        throw std::runtime_error("unknown entity type");
+        player = p;
+    const auto chunk_pos = get_chunk_pos(entity);
+    get_chunk(chunk_pos).insert(std::move(entity));
 }
  
-void EntityManager::unregister_entity(std::shared_ptr<Entity> entity)
+void EntityManager::unregister_entity(const std::shared_ptr<const Entity>& entity)
 {
     if(!entity->is_registered())
         throw std::runtime_error("entity is not registered");
     const auto chunk_pos = get_chunk_pos(entity);
-    const auto row_in_chunk = get_row_in_chunk(entity);
-
-    auto& row = chunks[chunk_pos.r][chunk_pos.c][row_in_chunk];
-    for(size_t i = 0 ; i < row.size() ;)
-        if(!row[i] || row[i] == entity.get() && row[i]->get_entity_code() == entity->get_entity_code())
-        {
-            std::swap(row[i], row.back());
-            row.pop_back();
-            break;
-        }
-        else
-            i++;
-
-    if(auto p = std::dynamic_pointer_cast<Player>(entity))
-    {
-        if(player && player->get_entity_code() == p->get_entity_code())
+    get_chunk(chunk_pos).erase(entity);
+    if(auto p = std::dynamic_pointer_cast<const Player>(entity))
+        if(player.lock() == p)
             player.reset();
-    }
-    else if(auto creature = std::dynamic_pointer_cast<Creature>(entity))
-    {
-        for(size_t i = 0 ; i < creatures.size() ;)
-            if(!creatures[i] || (creatures[i] == entity && creatures[i]->get_entity_code() == entity->get_entity_code()))
-            {
-                std::swap(creatures[i], creatures.back());
-                creatures.pop_back();
-                break;
-            }
-            else
-                i++;
-    }
-    else if(auto fallen_item = std::dynamic_pointer_cast<FallenItem>(entity))
-    {
-        for(size_t i = 0 ; i < fallen_items.size() ;)
-            if(!fallen_items[i] || (fallen_items[i] == entity && fallen_items[i]->get_entity_code() == entity->get_entity_code()))
-            {
-                std::swap(fallen_items[i], fallen_items.back());
-                fallen_items.pop_back();
-                break;
-            }
-            else
-                i++;
-    }
-    else if(auto thing = std::dynamic_pointer_cast<Thing>(entity))
-    {
-        for(size_t i = 0 ; i < things.size() ;)
-            if(!things[i] || (things[i] == entity && things[i]->get_entity_code() == entity->get_entity_code()))
-            {
-                    std::swap(things[i], things.back());
-                    things.pop_back();
-                    break;
-            }
-            else
-                i++;
-    }
 }
 
-void EntityManager::move_entity(const tools::POSf& prev_pos, std::shared_ptr<Entity> entity)
+void EntityManager::move_entity(const tools::POSf& prev_pos, const std::shared_ptr<Entity>& entity)
 {
-    const auto prev_chunk_pos = get_chunk_pos(prev_pos);
-    const auto prev_row_in_chunk = get_row_in_chunk(prev_pos.r);
-
-    auto& row = chunks[prev_chunk_pos.r][prev_chunk_pos.c][prev_row_in_chunk];
-    for(size_t i = 0 ; i < row.size() ;)
-        if(!row[i] || row[i] == entity.get() && row[i]->get_entity_code() == entity->get_entity_code())
-        {
-            std::swap(row[i], row.back());
-            row.pop_back();
-            break;
-        }
-        else
-            i++;
+    const auto pos = entity->get_pos();
     const auto chunk_pos = get_chunk_pos(entity);
-    const auto row_in_chunk = get_row_in_chunk(entity);
-    chunks[chunk_pos.r][chunk_pos.c].at(row_in_chunk).push_back(entity.get());
+    const auto prev_chunk_pos = get_chunk_pos(prev_pos);
+    if(prev_pos == pos || prev_chunk_pos == chunk_pos && prev_pos.y == pos.y)
+        return;
+    get_chunk(prev_chunk_pos).erase(entity,prev_pos.y);
+    get_chunk(chunk_pos).insert(entity);
 }
 
-void EntityManager::update_players(const WorldManager& world_manager)
+std::pair<tools::POSs,tools::POSs> EntityManager::get_update_chunk_range(const World& world, const Camera& camera) const
 {
+    const auto [start_world, end_world] = WindowManager::get_displayed_world_range(world, camera);
+    const auto start_chunk = get_chunk_pos(start_world);
+    const auto end_chunk = get_chunk_pos(end_world);
+
+    auto start = tools::POSs(
+        std::max(0, tools::CASTi(start_chunk.c) - UPDATE_CHUNK_DIAMETER),
+        std::max(0, tools::CASTi(start_chunk.r) - UPDATE_CHUNK_DIAMETER));
+    auto end = tools::POSs(
+        std::min(tools::CASTi(chunks[0].size()), tools::CASTi(end_chunk.c) + UPDATE_CHUNK_DIAMETER + 1),
+        std::min(tools::CASTi(chunks.size()), tools::CASTi(end_chunk.r) + UPDATE_CHUNK_DIAMETER + 1));
     
+    return {start,end};
 }
-void update_creatures(const WorldManager& world_manager)
+
+void EntityManager::update(const WorldManager& world_manager)
 {
-    
+    const auto [start, end] = get_update_chunk_range(world_manager.get_world(), world_manager.get_camera());
+    for (size_t r = start.r; r < end.r; ++r)
+    {
+        for (size_t c = start.c; c < end.c; ++c)
+        {
+            auto& chunk = chunks[r][c];
+            for(size_t i = 0 ; i < chunk.get_dynamic_entities_size() ; i++)
+            {
+                auto entity_ptr = chunk.get_dynamic_entity_ptr(i);
+                if(auto moving_entity = std::dynamic_pointer_cast<MovingEntity>(entity_ptr))
+                {
+                    move_entity(moving_entity->get_prev_pos(), moving_entity);
+                    moving_entity->sync_prev_pos();
+                }
+            }
+        }
+    }
 }
+
 void EntityManager::allot_player_keys(LetManager& let_manager)
 {
-    let_manager.allot_state_key(sf::Keyboard::Key::W, [this](){player->move_up();});
-    let_manager.allot_state_key(sf::Keyboard::Key::S, [this](){player->move_down();});
-    let_manager.allot_state_key(sf::Keyboard::Key::A, [this](){player->move_left();});
-    let_manager.allot_state_key(sf::Keyboard::Key::D, [this](){player->move_right();});
+    let_manager.allot_state_key(sf::Keyboard::Key::W, [this](){player.lock()->move_up();});
+    let_manager.allot_state_key(sf::Keyboard::Key::S, [this](){player.lock()->move_down();});
+    let_manager.allot_state_key(sf::Keyboard::Key::A, [this](){player.lock()->move_left();});
+    let_manager.allot_state_key(sf::Keyboard::Key::D, [this](){player.lock()->move_right();});
 }
-std::shared_ptr<Player> EntityManager::get_player(){return player;}
+
+Player& EntityManager::get_player()
+{
+    return *player.lock();
+}
+const Player& EntityManager::get_player() const
+{
+    return *player.lock();
+}
+std::shared_ptr<Player> EntityManager::get_player_ptr()
+{
+    return player.lock();
+}
+std::shared_ptr<const Player> EntityManager::get_player_ptr() const
+{
+    return player.lock();
+}
 

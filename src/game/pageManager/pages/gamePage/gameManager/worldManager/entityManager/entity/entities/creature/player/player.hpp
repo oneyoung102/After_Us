@@ -9,6 +9,8 @@ class Player : public Creature
 
     public:
         Player(const tools::POSf& pos);
+
+        virtual bool is_player() const override {return true;}
         
     virtual EntityName get_name() const override {return EntityName::player;}    
 };

@@ -24,5 +24,5 @@ class WorldManager
         const EntityManager& get_entity_manager() const;
         EntityManager& get_entity_manager();
 
-        void update(); // entityManager의 모든 업데이트와 카메라 trace를 포함
+        void update();
 };

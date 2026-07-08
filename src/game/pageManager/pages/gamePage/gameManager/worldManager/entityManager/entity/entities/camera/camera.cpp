@@ -7,11 +7,6 @@ Camera::Camera(std::shared_ptr<Entity> entity)
     set_altitude();
 }
 
-tools::POSf Camera::get_pos() const
-{
-    return pos;
-}
-
 void Camera::target(std::shared_ptr<Entity> entity)
 {
     tracing_entity = entity;
@@ -23,7 +18,7 @@ void Camera::untarget() {tracing_entity.reset();}
 void Camera::trace()
 {
     if(auto target = tracing_entity.lock())
-        pos += (target->get_pos() - pos)/16;
+        pos += (target->get_pos() + tools::POSf{0.f, -1.f} - pos)/16;
 }
 
 void Camera::rise(float altitude)
