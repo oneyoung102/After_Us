@@ -43,17 +43,15 @@ class Chunk
             entities->insert(it, std::move(entity));
         }
 
-        void erase(const std::shared_ptr<const Entity>& entity, std::optional<float> search_y = std::nullopt) 
+        void erase(const std::shared_ptr<const Entity>& entity) 
         {
             auto* entities = &static_entities;
             if(entity->is_dynamic_entity())
                 entities = &dynamic_entities;
             
-            float target_y = search_y.value_or(entity->get_pos().y);
-            auto it = std::lower_bound(entities->begin(), entities->end(), target_y, [](const std::shared_ptr<Entity>& a, float val){
-                return a->get_pos().y < val;
-            }); 
-            entities->erase(std::remove(it, entities->end(), entity), entities->end());
+            auto it = std::find(entities->begin(), entities->end(), entity);
+            if (it != entities->end())
+                entities->erase(it);
         }
 };
 
@@ -90,7 +88,7 @@ class EntityManager
 
         std::pair<tools::POSs,tools::POSs> get_update_chunk_range(const World& world, const Camera& camera) const;
 
-        void update(const WorldManager& world_manager);
+        void update(const WindowManager& window_manager, const WorldManager& world_manager);
 
 
         void allot_player_keys(LetManager& let_manager);

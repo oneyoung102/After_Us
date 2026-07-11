@@ -24,5 +24,5 @@ class WorldManager
         const EntityManager& get_entity_manager() const;
         EntityManager& get_entity_manager();
 
-        void update();
+        void update(const WindowManager& window_manager);
 };

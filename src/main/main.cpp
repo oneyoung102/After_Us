@@ -8,6 +8,7 @@
 int main()
 {   
     WindowManager window_manager("After Us");
+
     PageManager page_manager;
     while(window_manager.is_open())
     {

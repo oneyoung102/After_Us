@@ -19,8 +19,8 @@ Camera& WorldManager::get_camera(){return camera;}
 const EntityManager& WorldManager::get_entity_manager() const {return entity_manager;}
 EntityManager& WorldManager::get_entity_manager(){return entity_manager;}
 
-void WorldManager::update()
+void WorldManager::update(const WindowManager& window_manager)
 {
-    entity_manager.update(*this);
+    entity_manager.update(window_manager,*this);
     camera.trace();
 }

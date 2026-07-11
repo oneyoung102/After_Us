@@ -3,6 +3,9 @@
 #include "game/pageManager/pages/gamePage/gameManager/worldManager/world.hpp"
 #include "tools/pos.hpp"
 
+class WorldManager;
+class WindowManager;
+
 class Entity
 {
     public :
@@ -12,6 +15,7 @@ class Entity
         {
             camera,
             player,
+            pointer,
             COUNT
         };
     protected :
@@ -21,6 +25,8 @@ class Entity
     public :
         Entity(const tools::POSf& pos, float size = 1.f);
         virtual ~Entity() = default;
+
+        virtual void update(const WindowManager& window_manager, const WorldManager& world_manager) {}
 
         tools::POSf get_pos() const;
         float get_size() const;

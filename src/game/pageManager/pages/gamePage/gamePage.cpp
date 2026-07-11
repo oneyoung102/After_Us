@@ -5,12 +5,14 @@
 
 #include "resourceManager/printManager/printObject/printWorld.hpp"
 #include "resourceManager/printManager/printObject/printEntities.hpp"
+#include "resourceManager/printManager/printObject/printPointer.hpp"
 
 GamePage::GamePage(const FileManager& file_manager)
     : world_manager(WorldManager(0,Camera()))
 {
     print_manager.add_object(std::make_unique<PrintObject<World>>(file_manager.get_image_datas(),world_manager));
     print_manager.add_object(std::make_unique<PrintObject<Entity>>(file_manager.get_image_datas(),world_manager));
+    print_manager.add_object(std::make_unique<PrintObject<Pointer>>(file_manager.get_image_datas(),world_manager));
 
     auto& camera = world_manager.get_camera();
     auto& entity_manager = world_manager.get_entity_manager();
@@ -21,12 +23,13 @@ GamePage::GamePage(const FileManager& file_manager)
     camera.target(entity_manager.get_player_ptr());
 }
 
-PageSignal GamePage::proceed_page(FileManager& file_manager, sf::RenderWindow& window)
+PageSignal GamePage::proceed_page(FileManager& file_manager, WindowManager& window_manager)
 {
     PageSignal page_signal;
     
-    print_manager.print_objects(window);
-    world_manager.update();
+    print_manager.print_objects(window_manager.get_window());
+    world_manager.update(window_manager);
+    window_manager.show_mouse_cursor(false); // 인벤토리 열거나 이럴 때 true 할 예정
 
 
     return page_signal;

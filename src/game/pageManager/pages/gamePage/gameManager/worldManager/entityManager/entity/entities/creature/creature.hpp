@@ -1,8 +1,11 @@
 #pragma once
 
-#include "game/pageManager/pages/gamePage/gameManager/worldManager/entityManager/entity/movingEntity.hpp"
+#include "game/pageManager/pages/gamePage/gameManager/worldManager/entityManager/entity/movingEntity/movingEntity.hpp"
 #include "main/windowManager/tick.hpp"
 #include <memory>
+
+class WindowManager;
+class WorldManager;
 
 class Creature : public MovingEntity
 {
@@ -72,9 +75,9 @@ class Creature : public MovingEntity
         bool noticeable(std::weak_ptr<const Entity> entity) const;
         bool attackable(std::weak_ptr<const Creature> entity) const;
         void attack(std::weak_ptr<Creature> entity) const;
-
         void target(std::shared_ptr<const Creature> target);
         void untarget();
 
         virtual bool is_creature() const override {return true;}
+        virtual void update(const WindowManager& window_manager, const WorldManager& world_manager) override;
 };

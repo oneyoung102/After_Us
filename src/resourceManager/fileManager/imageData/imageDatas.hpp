@@ -10,6 +10,7 @@
 // 1st 전방선언
 class WorldImageData;
 class PlayerImageData;
+class PointerImageData;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -20,7 +21,8 @@ class ImageDatas
     private :
         using ImageClassList = std::tuple<
             WorldImageData,
-            PlayerImageData
+            PlayerImageData,
+            PointerImageData
         >;
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // 3rd 여기에 이미지 명 추가 (반드시 이미지 파일 순서와 맞게)
@@ -28,6 +30,7 @@ class ImageDatas
         enum class Name{//이미지 명
             world,
             player,
+            pointer,
             COUNT
         };
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -133,12 +136,30 @@ class PlayerImageData : public ImageData
             add_cropped_image_data(CroppedImageName::LEFT_2, {10,0});
             add_cropped_image_data(CroppedImageName::LEFT_3, {11,0});
         }  
-        const tools::POSi& operator[](Creature::MovingState idx) const
-        {
-            return cropped_image_datas[tools::CASTs(idx)];
-        }
 
         static constexpr ImageDatas::Name name = ImageDatas::Name::player;
+};
+
+class PointerImageData : public ImageData
+{
+    public :
+        static constexpr ImageSize POINTER_SIZE = {64,64};
+
+        enum class CroppedImageName
+        {
+            UNFOCUSING,
+            FOCUSING,
+            COUNT
+        };
+
+        PointerImageData(sf::Texture&& texture)
+            : ImageData(std::move(texture),POINTER_SIZE)
+        {
+            add_cropped_image_data(CroppedImageName::UNFOCUSING, {0,0});
+            add_cropped_image_data(CroppedImageName::FOCUSING, {1,0});
+        }  
+
+        static constexpr ImageDatas::Name name = ImageDatas::Name::pointer;
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////

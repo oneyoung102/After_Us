@@ -39,7 +39,7 @@ void PageManager::show_page(WindowManager& window_manager)
     curr_page->get_let_manager().act_state_let();
     
     window_manager.clear();
-    signal = curr_page->proceed_page(file_manager, window_manager.get_window());
+    signal = curr_page->proceed_page(file_manager, window_manager);
     window_manager.set_view();
     window_manager.display();
     

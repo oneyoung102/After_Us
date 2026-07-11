@@ -157,4 +157,34 @@ void WindowManager::set_view()
     window.setView(view);
 }
 
-
+void WindowManager::show_mouse_cursor(bool show) //mouse manager 만들어서 옮길 거임
+{
+    window.setMouseCursorVisible(show);
+}
+tools::POSf WindowManager::get_mouse_pos() const
+{
+    sf::Vector2f view_pos = window.mapPixelToCoords(sf::Mouse::getPosition() - window.getPosition(), view);
+    return {view_pos.x, view_pos.y};
+}
+tools::POSf WindowManager::get_mouse_pos(const tools::POSf& anchor, float radius, const Camera& camera) const
+{
+    tools::POSf world_pos = pixel_pos_to_world_pos(get_mouse_pos(), camera);
+    tools::POSf diff = world_pos - anchor;
+    float dist = std::sqrt(diff.x * diff.x + diff.y * diff.y);
+    
+    if (dist > radius)
+    {
+        world_pos = anchor + diff * (radius / dist);
+        tools::POSf screen_pos = world_pos_to_pixel_pos(world_pos, camera);
+        sf::Mouse::setPosition(window.getPosition() + window.mapCoordsToPixel({screen_pos.x, screen_pos.y}, view));
+    }
+    return world_pos;
+}
+bool WindowManager::left_mouse_click() const
+{   
+    return sf::Mouse::isButtonPressed(sf::Mouse::Button::Left);
+}
+bool WindowManager::right_mouse_click() const
+{
+    return sf::Mouse::isButtonPressed(sf::Mouse::Button::Right);
+}

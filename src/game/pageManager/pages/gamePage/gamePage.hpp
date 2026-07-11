@@ -9,6 +9,6 @@ class GamePage : public Page
         WorldManager world_manager;
     public :
         GamePage(const FileManager& file_manager);
-        virtual PageSignal proceed_page(FileManager& file_manager, sf::RenderWindow& window) override;
+        virtual PageSignal proceed_page(FileManager& file_manager, WindowManager& window_manager) override;
         constexpr virtual Name get_name() const override;
 };

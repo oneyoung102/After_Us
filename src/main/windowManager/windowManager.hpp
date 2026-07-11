@@ -51,4 +51,10 @@ class WindowManager
 
         void resize_window(const std::optional<sf::Event>& event);
         void set_view();
+
+        void show_mouse_cursor(bool show);
+        tools::POSf get_mouse_pos() const;
+        tools::POSf get_mouse_pos(const tools::POSf& anchor_pos, float radius, const Camera& camera) const;
+        bool left_mouse_click() const;
+        bool right_mouse_click() const;
 };

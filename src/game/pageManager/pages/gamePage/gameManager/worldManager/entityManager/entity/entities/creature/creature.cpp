@@ -98,3 +98,8 @@ void Creature::attack(std::weak_ptr<Creature> entity) const {entity.lock()->add_
 
 void Creature::target(std::shared_ptr<const Creature> target){ __target = target;}
 void Creature::untarget(){ __target.reset();}
+
+void Creature::update(const WindowManager& window_manager, const WorldManager& world_manager)
+{
+    MovingEntity::update(window_manager, world_manager);
+}

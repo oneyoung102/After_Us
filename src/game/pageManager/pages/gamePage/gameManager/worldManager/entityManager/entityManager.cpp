@@ -62,7 +62,7 @@ void EntityManager::move_entity(const tools::POSf& prev_pos, const std::shared_p
     const auto prev_chunk_pos = get_chunk_pos(prev_pos);
     if(prev_pos == pos || prev_chunk_pos == chunk_pos && prev_pos.y == pos.y)
         return;
-    get_chunk(prev_chunk_pos).erase(entity,prev_pos.y);
+    get_chunk(prev_chunk_pos).erase(entity);
     get_chunk(chunk_pos).insert(entity);
 }
 
@@ -82,7 +82,7 @@ std::pair<tools::POSs,tools::POSs> EntityManager::get_update_chunk_range(const W
     return {start,end};
 }
 
-void EntityManager::update(const WorldManager& world_manager)
+void EntityManager::update(const WindowManager& window_manager, const WorldManager& world_manager)
 {
     const auto [start, end] = get_update_chunk_range(world_manager.get_world(), world_manager.get_camera());
     for (size_t r = start.r; r < end.r; ++r)
@@ -93,10 +93,11 @@ void EntityManager::update(const WorldManager& world_manager)
             for(size_t i = 0 ; i < chunk.get_dynamic_entities_size() ; i++)
             {
                 auto entity_ptr = chunk.get_dynamic_entity_ptr(i);
+                entity_ptr->update(window_manager, world_manager);
+
                 if(auto moving_entity = std::dynamic_pointer_cast<MovingEntity>(entity_ptr))
                 {
                     move_entity(moving_entity->get_prev_pos(), moving_entity);
-                    moving_entity->sync_prev_pos();
                 }
             }
         }
@@ -111,20 +112,8 @@ void EntityManager::allot_player_keys(LetManager& let_manager)
     let_manager.allot_state_key(sf::Keyboard::Key::D, [this](){player.lock()->move_right();});
 }
 
-Player& EntityManager::get_player()
-{
-    return *player.lock();
-}
-const Player& EntityManager::get_player() const
-{
-    return *player.lock();
-}
-std::shared_ptr<Player> EntityManager::get_player_ptr()
-{
-    return player.lock();
-}
-std::shared_ptr<const Player> EntityManager::get_player_ptr() const
-{
-    return player.lock();
-}
+Player& EntityManager::get_player() {return *player.lock();}
+const Player& EntityManager::get_player() const {return *player.lock();}
+std::shared_ptr<Player> EntityManager::get_player_ptr(){return player.lock();}
+std::shared_ptr<const Player> EntityManager::get_player_ptr() const{return player.lock();}
 

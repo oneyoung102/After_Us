@@ -26,8 +26,8 @@ class World
 
         tools::POSs get_size() const;
 
-        bool in(tools::POSs&& pos) const;
-        bool in(const tools::POSs& pos) const;
+        bool in(tools::POSf&& pos) const;
+        bool in(const tools::POSf& pos) const;
 
         Tile& operator[](tools::POSs&& pos);
         Tile& operator[](const tools::POSs& pos);

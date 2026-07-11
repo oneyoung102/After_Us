@@ -20,14 +20,14 @@ void World::init(WORLD_TYPE&& world)
 
 tools::POSs World::get_size() const {return world_size;}
 
-bool World::in(tools::POSs&& pos) const
+bool World::in(tools::POSf&& pos) const
 {
-    return tools::POSs() <= pos && pos < world_size;
+    return tools::POSf() <= pos && pos < world_size;
 }
 
-bool World::in(const tools::POSs& pos) const
+bool World::in(const tools::POSf& pos) const
 {
-    return tools::POSs() <= pos && pos < world_size;
+    return tools::POSf() <= pos && pos < world_size;
 }
 
 World::Tile& World::operator[](tools::POSs&& pos)

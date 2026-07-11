@@ -1,13 +1,18 @@
 #include "camera.hpp"
 
-Camera::Camera(std::shared_ptr<Entity> entity)
+Camera::Camera(std::shared_ptr<const Entity> entity)
     : MovingEntity(entity ? entity->get_pos() : tools::POSf(0.f, 0.f), 0)
     , tracing_entity(entity)
 {
     set_altitude();
 }
 
-void Camera::target(std::shared_ptr<Entity> entity)
+tools::POSf Camera::get_pos() const
+{
+    return pos+tools::POSf(0.f, -0.5f);
+}
+
+void Camera::target(std::shared_ptr<const Entity> entity)
 {
     tracing_entity = entity;
     if(auto target = tracing_entity.lock())
@@ -18,7 +23,7 @@ void Camera::untarget() {tracing_entity.reset();}
 void Camera::trace()
 {
     if(auto target = tracing_entity.lock())
-        pos += (target->get_pos() + tools::POSf{0.f, -1.f} - pos)/16;
+        pos += (target->get_pos() - pos)/16;
 }
 
 void Camera::rise(float altitude)

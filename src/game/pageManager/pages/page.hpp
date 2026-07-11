@@ -1,5 +1,6 @@
 #pragma once
 
+#include "main/windowManager/windowManager.hpp"
 #include "resourceManager/printManager/printManager.hpp"
 #include "resourceManager/soundManager/soundManager.hpp"
 #include "game/letManager/letManager.hpp"
@@ -25,7 +26,7 @@ class Page
     public :
         Page();
         virtual ~Page() = default;
-        virtual PageSignal proceed_page(FileManager& file_manager, sf::RenderWindow& window) = 0;
+        virtual PageSignal proceed_page(FileManager& file_manager, WindowManager& window_manager) = 0;
         constexpr virtual Name get_name() const = 0;
         LetManager& get_let_manager();
 };
