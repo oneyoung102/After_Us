@@ -3,16 +3,16 @@
 #include "tools/hasWHAT.hpp"
 
 Creature::Creature(const tools::POSf& pos,
-            float size,
+            tools::POSf size,
             float speed,
-            unsigned int threshold_height,
+            unsigned int ascendable_height,
             int max_health,
             int health,
             int power,
-            Tick time_for_attack,
+            tools::Tick time_for_attack,
             float attack_distance,
             float notice_distance)
-    : MovingEntity(pos, size, speed, threshold_height)
+    : MovingEntity(pos, size, speed, ascendable_height)
     , foot_state(FootState::stop)
 {
     static_assert(tools::has_count<MovingState>(), "MovingState has no COUNT");

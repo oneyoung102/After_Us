@@ -1,6 +1,6 @@
 #include "worldManager.hpp"
 
-WorldManager::WorldManager(Tick time, Camera&& camera)
+WorldManager::WorldManager(tools::Tick time, Camera&& camera)
     : entity_manager(world)
     , time(time)
     , camera(std::move(camera))

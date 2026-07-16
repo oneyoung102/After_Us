@@ -20,7 +20,7 @@ class MovingEntity : public Entity
 
         tools::Direction direction;
     public :
-        MovingEntity(const tools::POSf& pos, unsigned int size = 1, float speed = DEFAULT_SPEED, unsigned int ascendable_height = 1);
+        MovingEntity(const tools::POSf& pos, tools::POSf size = {1.f, 1.f}, float speed = DEFAULT_SPEED, unsigned int ascendable_height = 1);
         virtual ~MovingEntity() = default;
 
         virtual void update(const WindowManager& window_manager, const WorldManager& world_manager) override;

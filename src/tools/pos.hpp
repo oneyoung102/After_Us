@@ -114,6 +114,8 @@ namespace tools
             constexpr inline bool operator>(Pos&& other) const { return this->x > other.x && this->y > other.y; }
             constexpr inline bool operator<=(Pos&& other) const { return this->x <= other.x && this->y <= other.y; }
             constexpr inline bool operator>=(Pos&& other) const { return this->x >= other.x && this->y >= other.y; }
+
+            constexpr inline float square_size() const {return x*x+y*y;}
     };
 
     using POSs = Pos<size_t>;

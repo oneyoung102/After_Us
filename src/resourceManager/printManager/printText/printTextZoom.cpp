@@ -7,7 +7,7 @@
 using namespace std;
 using namespace sf;
 
-PrintTextZoom::PrintTextZoom(tools::POSf pos, const string& content, const Font& font, int size, Tick cycle, sf::Color color, sf::Text::Style style, Tick life)
+PrintTextZoom::PrintTextZoom(tools::POSf pos, const string& content, const Font& font, int size, tools::Tick cycle, sf::Color color, sf::Text::Style style, tools::Tick life)
     : PrintText(pos,content,font,size,color,style,life)
     , cycle(cycle)
     , d_size(max(1,size/TEXT_ZOOM_SIZE_PROP))

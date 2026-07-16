@@ -9,8 +9,8 @@ class AcceleratedMotion
         static constexpr float BASIC_MAX_ACCELERATION = 0.025;
 
         static constexpr float MAX_POWER = 1;
-        static constexpr float POWER_LESS = 0.075;
-        static constexpr float POWER_GRADIANCE = 0.05;
+        static constexpr float POWER_LESS = 0.05;
+        static constexpr float POWER_GRADIANCE = 0.03;
 
         float speed;
 

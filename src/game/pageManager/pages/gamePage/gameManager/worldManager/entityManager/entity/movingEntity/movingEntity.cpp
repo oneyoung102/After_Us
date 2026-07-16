@@ -3,7 +3,7 @@
 #include "game/pageManager/pages/gamePage/gameManager/worldManager/worldManager.hpp"
 #include <cmath>
 
-MovingEntity::MovingEntity(const tools::POSf& pos, unsigned int size, float speed, unsigned int ascendable_height)
+MovingEntity::MovingEntity(const tools::POSf& pos, tools::POSf size, float speed, unsigned int ascendable_height)
     : Entity(pos, size)
     , ascendable_height(ascendable_height)
     , prev_pos(pos)
@@ -45,7 +45,7 @@ bool MovingEntity::is_moveable_to(const World& world, const tools::POSf& pos)
 {
     if(!world.in(pos))
         return false;
-    return abs(world.get_height(pos)-get_curr_height(world)) <= ascendable_height;
+    return abs(world.get_height(pos)-world.get_height(this->pos)) <= ascendable_height;
 }
 
 tools::Direction MovingEntity::get_direction() const {return direction;}

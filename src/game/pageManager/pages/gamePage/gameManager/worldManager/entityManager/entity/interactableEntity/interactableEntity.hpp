@@ -7,12 +7,16 @@ class WorldManager;
 
 class InteractableEntity : public Entity
 {
-    private :
+    protected :
+        bool __is_interacted;
     public :
-        InteractableEntity(const tools::POSf& pos, unsigned int size = 1);
+        InteractableEntity(const tools::POSf& pos, tools::POSf size = {1.f, 1.f});
         virtual ~InteractableEntity() = default;
 
         virtual void update(const WindowManager& window_manager, const WorldManager& world_manager) override;
+
+        bool is_interacted() const;
+        void set_interacted_state(bool state);
 
         virtual bool is_interactable_entity() const override {return true;}
 };

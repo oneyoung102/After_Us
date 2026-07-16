@@ -1,6 +1,5 @@
 #pragma once
 
-#include "game/pageManager/pages/gamePage/gameManager/worldManager/world.hpp"
 #include "tools/pos.hpp"
 
 class WorldManager;
@@ -20,27 +19,26 @@ class Entity
         };
     protected :
         tools::POSf pos;
-        float size;
+        tools::POSf size;
         ENTITY_CODE entity_code;
     public :
-        Entity(const tools::POSf& pos, float size = 1.f);
+        Entity(const tools::POSf& pos, tools::POSf size);
         virtual ~Entity() = default;
 
         virtual void update(const WindowManager& window_manager, const WorldManager& world_manager) {}
 
         tools::POSf get_pos() const;
-        float get_size() const;
+        tools::POSf get_size() const;
 
         void set_pos(const tools::POSf& pos);
-        void set_pos(const tools::POSf&& pos);
-        void set_size(float size);
-
-        World::Tile get_curr_tile(const World& world) const;
-        int get_curr_height(const World& world) const;
+        void set_pos(tools::POSf&& pos);
+        void set_size(const tools::POSf& size);
 
         bool is_registered() const;
         ENTITY_CODE get_entity_code() const;
         void set_entity_code(ENTITY_CODE entity_code);
+
+        bool is_collided(const Entity& entity) const;
 
         virtual EntityName get_name() const = 0;
 

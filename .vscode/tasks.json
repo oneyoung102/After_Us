@@ -22,7 +22,9 @@
                 "src/resourceManager/printManager/printButton/printButton.cpp",
                 "src/resourceManager/printManager/printButton/printDialButton.cpp",
 
-                "src/game/letManager/letManager.cpp",
+                "src/game/keyManager/keyboardManager.cpp",
+                "src/game/keyManager/mouseManager.cpp",
+                "src/game/keyManager/pointer/pointer.cpp",
                 "src/game/pageManager/pageManager.cpp",
                 "src/game/pageManager/pages/page.cpp",
                 "src/game/pageManager/pages/gamePage/gamePage.cpp",
@@ -36,11 +38,11 @@
                 "src/game/pageManager/pages/gamePage/gameManager/worldManager/entityManager/entity/movingEntity/acceleratedMotion.cpp",
                 "src/game/pageManager/pages/gamePage/gameManager/worldManager/entityManager/entity/entities/creature/creature.cpp",
                 "src/game/pageManager/pages/gamePage/gameManager/worldManager/entityManager/entity/entities/creature/player/player.cpp",
-                "src/game/pageManager/pages/gamePage/gameManager/worldManager/entityManager/entity/entities/creature/player/pointer/pointer.cpp",
                 "src/game/pageManager/pages/gamePage/gameManager/worldManager/entityManager/entity/entities/fallenItem/fallenItem.cpp",
                 "src/game/pageManager/pages/gamePage/gameManager/worldManager/entityManager/entity/entities/thing/thing.cpp",
                 "src/game/pageManager/pages/gamePage/gameManager/worldManager/entityManager/entity/entities/camera/camera.cpp",
                 "src/game/pageManager/pages/gamePage/gameManager/worldManager/entityManager/entityManager.cpp",
+                "src/game/pageManager/pages/gamePage/gameManager/worldManager/entityManager/chunk/chunk.cpp",
 
                 "-o",
                 "${workspaceFolder}/bin/after_us",

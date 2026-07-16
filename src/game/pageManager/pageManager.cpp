@@ -34,9 +34,11 @@ void PageManager::show_page(WindowManager& window_manager)
         if(event->is<Event::Closed>())
             window_manager.close();
         window_manager.resize_window(event);
-        curr_page->get_let_manager().act_event_let(event);
+        curr_page->get_keyboard_manager().update(event);
     }
-    curr_page->get_let_manager().act_state_let();
+    curr_page->get_keyboard_manager().act_key_event();
+    curr_page->get_mouse_manager().update();
+    curr_page->get_mouse_manager().act_key_event();
     
     window_manager.clear();
     signal = curr_page->proceed_page(file_manager, window_manager);

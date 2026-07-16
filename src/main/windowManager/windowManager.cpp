@@ -1,7 +1,7 @@
 #include "main/windowManager/windowManager.hpp"
-#include "main/windowManager/tick.hpp"
 #include "resourceManager/fileManager/imageData/imageDatas.hpp"
 #include "tools/cast.hpp"
+#include "tools/tick.hpp"
 
 WindowManager::ScreenSizeType WindowManager::screen_size;
 WindowManager::ScreenSizeType WindowManager::screen_center;
@@ -17,7 +17,7 @@ WindowManager::WindowManager(std::string&& name)
     view = sf::View(sf::FloatRect({0.f, 0.f}, {screen_size.x, screen_size.y}));
     view.setViewport(get_resized_viewport(window.getSize()));
     set_view();
-    window.setFramerateLimit(Tick::FRAMERATE);
+    window.setFramerateLimit(tools::Tick::FRAMERATE);
 }
 
 WindowManager::ScreenSizeType WindowManager::get_screen_size() {return screen_size;}
@@ -27,7 +27,7 @@ float WindowManager::get_scale(const Camera& camera)
 {
     const float base_width = 1470.f;
     const float current_width = WindowManager::get_screen_size().x;
-    return (current_width / base_width) * (6.5 / camera.get_altitude());
+    return (current_width / base_width) * (7 / camera.get_altitude());
 }
 tools::POSf WindowManager::get_pixel_world_origin(const Camera& camera)
 {
@@ -100,14 +100,11 @@ sf::FloatRect WindowManager::get_resized_window(const sf::Event::Resized* resize
     return get_resized_viewport(resize->size);
 }
 
-const decltype(WindowManager::window)& WindowManager::get_window() const
-{
-    return window;
-}
-decltype(WindowManager::window)& WindowManager::get_window()
-{
-    return window;
-}
+const decltype(WindowManager::window)& WindowManager::get_window() const {return window;}
+decltype(WindowManager::window)& WindowManager::get_window() {return window;}
+
+const sf::View& WindowManager::get_view() const {return view;}
+sf::View& WindowManager::get_view() {return view;}
 
 void WindowManager::capture_window()
 {
@@ -155,36 +152,4 @@ void WindowManager::resize_window(const std::optional<sf::Event>& event)
 void WindowManager::set_view()
 {
     window.setView(view);
-}
-
-void WindowManager::show_mouse_cursor(bool show) //mouse manager 만들어서 옮길 거임
-{
-    window.setMouseCursorVisible(show);
-}
-tools::POSf WindowManager::get_mouse_pos() const
-{
-    sf::Vector2f view_pos = window.mapPixelToCoords(sf::Mouse::getPosition() - window.getPosition(), view);
-    return {view_pos.x, view_pos.y};
-}
-tools::POSf WindowManager::get_mouse_pos(const tools::POSf& anchor, float radius, const Camera& camera) const
-{
-    tools::POSf world_pos = pixel_pos_to_world_pos(get_mouse_pos(), camera);
-    tools::POSf diff = world_pos - anchor;
-    float dist = std::sqrt(diff.x * diff.x + diff.y * diff.y);
-    
-    if (dist > radius)
-    {
-        world_pos = anchor + diff * (radius / dist);
-        tools::POSf screen_pos = world_pos_to_pixel_pos(world_pos, camera);
-        sf::Mouse::setPosition(window.getPosition() + window.mapCoordsToPixel({screen_pos.x, screen_pos.y}, view));
-    }
-    return world_pos;
-}
-bool WindowManager::left_mouse_click() const
-{   
-    return sf::Mouse::isButtonPressed(sf::Mouse::Button::Left);
-}
-bool WindowManager::right_mouse_click() const
-{
-    return sf::Mouse::isButtonPressed(sf::Mouse::Button::Right);
 }

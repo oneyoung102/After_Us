@@ -48,7 +48,7 @@ class PrintObject<Entity> : public PrintObjectInterface
         
         void print_entity(sf::RenderWindow& w, Shader& shader, const tools::POSf& screen_pos, const Entity& entity)
         {
-            shader.set_brightness(shader.get_brightness_by_height(entity.get_curr_height(world), camera.get_curr_height(world)));
+            shader.set_brightness(shader.get_brightness_by_height(world.get_height(entity.get_pos()), world.get_height(camera.get_pos())));
             if(entity.is_creature())
                 print_creature(w,shader,screen_pos,static_cast<const Creature&>(entity));
             else
@@ -101,5 +101,7 @@ class PrintObject<Entity> : public PrintObjectInterface
                         }
                 }
             }
+            if(is_alive())
+                --life;
         }
 };

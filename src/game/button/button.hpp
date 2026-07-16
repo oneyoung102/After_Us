@@ -1,13 +1,13 @@
 #pragma once
 
 #include "game/button/buttonCursor.hpp"
-#include "game/letManager/letManager.hpp"
+#include "game/keyManager/keyboardManager.hpp"
 #include "game/objectSignal/objectSignalReceiver.hpp"
 #include "resourceManager/soundManager/soundManager.hpp"
 #include <functional>
 
 class FileManager;
-class LetManager;
+class KeyboardManager;
 
 template<size_t R, size_t C, class buttonName>
 class Button
@@ -22,7 +22,7 @@ class Button
             : cursor(std::move(allocated), cyclic)
             , __selected(false)
         {}
-        void setExecutes(SoundManager& ps, LetManager& pl)
+        void setExecutes(SoundManager& ps, KeyboardManager& pl)
         {
             signalReceiver.addExecute(ButtonCursorSignal::cursor, [&ps](FileManager& pfs){
                 //ps.play_sound(pfs.get_buffer(fileManager::Sound::cursor));

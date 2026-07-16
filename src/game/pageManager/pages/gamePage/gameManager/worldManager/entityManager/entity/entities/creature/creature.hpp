@@ -1,7 +1,7 @@
 #pragma once
 
 #include "game/pageManager/pages/gamePage/gameManager/worldManager/entityManager/entity/movingEntity/movingEntity.hpp"
-#include "main/windowManager/tick.hpp"
+#include "tools/tick.hpp"
 #include <memory>
 
 class WindowManager;
@@ -13,7 +13,7 @@ class Creature : public MovingEntity
         int max_health, health;
 
         int power;
-        Tick time_for_attack;
+        tools::Tick time_for_attack;
         float attack_distance;
         std::weak_ptr<const Creature> __target;
 
@@ -30,13 +30,13 @@ class Creature : public MovingEntity
         
     public :
         Creature(const tools::POSf& pos,
-            float size,
+            tools::POSf size,
             float speed,
-            unsigned int threshold_height,
+            unsigned int ascendable_height,
             int max_health,
             int health,
             int power,
-            Tick attack_speed,
+            tools::Tick attack_speed,
             float attack_distance,
             float notice_distance);
         virtual ~Creature() = default;

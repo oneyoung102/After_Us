@@ -3,4 +3,5 @@
 Page::Page()
     : convert_page(false)
 {}
-LetManager& Page::get_let_manager(){return let_manager;}
+KeyboardManager& Page::get_keyboard_manager(){return keyboard_manager;}
+MouseManager& Page::get_mouse_manager() {return mouse_manager;}

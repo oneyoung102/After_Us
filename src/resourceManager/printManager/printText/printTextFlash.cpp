@@ -6,7 +6,7 @@
 using namespace std;
 using namespace sf;
 
-PrintTextFlash::PrintTextFlash(tools::POSf pos, const string& content, const Font& font, int size, Tick cycle, sf::Color color, sf::Text::Style style, Tick life)
+PrintTextFlash::PrintTextFlash(tools::POSf pos, const string& content, const Font& font, int size, tools::Tick cycle, sf::Color color, sf::Text::Style style, tools::Tick life)
     : PrintText(pos,content,font,size,color,style,life)
     , cycle(cycle)
     , cycle_count(0)

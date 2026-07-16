@@ -1,10 +1,10 @@
 #include "entityManager.hpp"
-#include "game/letManager/letManager.hpp"
+#include "game/keyManager/keyboardManager.hpp"
 #include "game/pageManager/pages/gamePage/gameManager/worldManager/entityManager/entity/entities/camera/camera.hpp"
 #include "game/pageManager/pages/gamePage/gameManager/worldManager/worldManager.hpp"
 #include "main/windowManager/windowManager.hpp"
 #include "tools/cast.hpp"
-#include <cmath>
+#include "tools/pos.hpp"
 #include <memory>
 
 EntityManager::EntityManager(const World& world, std::vector<std::unique_ptr<Entity>>&& entities)
@@ -29,7 +29,12 @@ const Chunk& EntityManager::get_chunk(const tools::POSs& pos) const
 }
 tools::POSs EntityManager::get_chunks_size() const
 {
-    return tools::POSs(chunks.size(), chunks[0].size());
+    return tools::POSs(chunks[0].size(),chunks.size());
+}
+
+bool EntityManager::is_valid_chunk(const tools::POSi& chunk_pos) const
+{
+    return chunk_pos.r >= 0 && chunk_pos.r < chunks.size() && chunk_pos.c >= 0 && chunk_pos.c < chunks[0].size();
 }
 
 void EntityManager::register_entity(std::shared_ptr<Entity> entity)
@@ -95,6 +100,11 @@ void EntityManager::update(const WindowManager& window_manager, const WorldManag
                 auto entity_ptr = chunk.get_dynamic_entity_ptr(i);
                 entity_ptr->update(window_manager, world_manager);
 
+                if(auto creature = std::dynamic_pointer_cast<Creature>(entity_ptr))
+                {
+                    if(!creature->is_alive())
+                        unregister_entity(entity_ptr);
+                }
                 if(auto moving_entity = std::dynamic_pointer_cast<MovingEntity>(entity_ptr))
                 {
                     move_entity(moving_entity->get_prev_pos(), moving_entity);
@@ -104,12 +114,73 @@ void EntityManager::update(const WindowManager& window_manager, const WorldManag
     }
 }
 
-void EntityManager::allot_player_keys(LetManager& let_manager)
+std::vector<std::shared_ptr<Entity>> EntityManager::find_collided_dynamic_entities(const Entity& entity)
 {
-    let_manager.allot_state_key(sf::Keyboard::Key::W, [this](){player.lock()->move_up();});
-    let_manager.allot_state_key(sf::Keyboard::Key::S, [this](){player.lock()->move_down();});
-    let_manager.allot_state_key(sf::Keyboard::Key::A, [this](){player.lock()->move_left();});
-    let_manager.allot_state_key(sf::Keyboard::Key::D, [this](){player.lock()->move_right();});
+    std::vector<std::shared_ptr<Entity>> collided_entities;
+    const tools::POSi chunk_pos = get_chunk_pos(entity.get_pos());
+
+    tools::POSi chunks_size = get_chunks_size();
+    const tools::POSs start = {
+        tools::CASTs(std::max(0, chunk_pos.c - 1)),
+        tools::CASTs(std::max(0, chunk_pos.r - 1))};
+    const tools::POSs end = {
+        tools::CASTs(std::min(chunk_pos.c + 1, chunks_size.c - 1)),
+        tools::CASTs(std::min(chunk_pos.r + 1, chunks_size.r - 1))};
+
+    for (size_t row = start.r; row <= end.r; ++row)
+        for (size_t col = start.c; col <= end.c; ++col)
+        {
+            tools::POSs chunk_pos(col, row);
+            auto& chunk = get_chunk(chunk_pos);
+            
+            auto condition = [&entity](const Entity& object){
+                if (object == entity)
+                    return false;
+                return entity.is_collided(object);
+            };
+            
+            auto dynamic_entities = chunk.find_dynamic_entities(condition);
+            collided_entities.insert(collided_entities.end(), dynamic_entities.begin(), dynamic_entities.end());
+        } 
+    
+    return collided_entities;
+}
+bool EntityManager::is_collided(const Entity& entity)
+{
+    const tools::POSi chunk_pos = get_chunk_pos(entity.get_pos());
+
+    tools::POSi chunks_size = get_chunks_size();
+    const tools::POSs start = {
+        tools::CASTs(std::max(0, chunk_pos.c - 1)),
+        tools::CASTs(std::max(0, chunk_pos.r - 1))};
+    const tools::POSs end = {
+        tools::CASTs(std::min(chunk_pos.c + 1, chunks_size.c - 1)),
+        tools::CASTs(std::min(chunk_pos.r + 1, chunks_size.r - 1))};
+
+    for (size_t row = start.r; row <= end.r; ++row)
+        for (size_t col = start.c; col <= end.c; ++col)
+        {
+            tools::POSs chunk_pos(col, row);
+            auto& chunk = get_chunk(chunk_pos);
+            
+            for(size_t i = 0; i < chunk.get_static_entities_size(); ++i)
+                if(entity.is_collided(chunk.get_static_entity(i)))
+                    return true;
+            for(size_t i = 0; i < chunk.get_dynamic_entities_size(); ++i)
+                if(entity.is_collided(chunk.get_dynamic_entity(i)))
+                    return true;
+        } 
+    
+    return false;
+}
+
+
+void EntityManager::allot_player_keys(KeyboardManager& keyboard_Manager)
+{
+    keyboard_Manager.allot_key(sf::Keyboard::Key::W, [this](){player.lock()->move_up();});
+    keyboard_Manager.allot_key(sf::Keyboard::Key::S, [this](){player.lock()->move_down();});
+    keyboard_Manager.allot_key(sf::Keyboard::Key::A, [this](){player.lock()->move_left();});
+    keyboard_Manager.allot_key(sf::Keyboard::Key::D, [this](){player.lock()->move_right();});
 }
 
 Player& EntityManager::get_player() {return *player.lock();}

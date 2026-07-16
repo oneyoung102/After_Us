@@ -2,58 +2,12 @@
 
 #include <vector>
 #include <memory>
-#include <algorithm>
-#include "game/letManager/letManager.hpp"
+#include "game/keyManager/keyboardManager.hpp"
+#include "game/pageManager/pages/gamePage/gameManager/worldManager/entityManager/chunk/chunk.hpp"
 #include "game/pageManager/pages/gamePage/gameManager/worldManager/entityManager/entity/entities/creature/player/player.hpp"
 #include "game/pageManager/pages/gamePage/gameManager/worldManager/entityManager/entity/entity.hpp"
 
-class Chunk
-{
-    private :
-        using ENTITY_LIST_TYPE = std::vector<std::shared_ptr<Entity>>; //y좌표 기준 오름차순 정렬(insert sort)
-        
-        ENTITY_LIST_TYPE static_entities;
-        ENTITY_LIST_TYPE dynamic_entities;
-    public :
-        constexpr static unsigned int CHUNK_SIZE = 16; //청크는 정사각형
 
-        Entity& get_static_entity(size_t idx) {return *static_entities[idx];}
-        Entity& get_dynamic_entity(size_t idx) {return *dynamic_entities[idx];}
-        const Entity& get_static_entity(size_t idx) const {return *static_entities[idx];}
-        const Entity& get_dynamic_entity(size_t idx) const {return *dynamic_entities[idx];}
-
-        std::shared_ptr<Entity> get_static_entity_ptr(size_t idx) {return static_entities[idx];}
-        std::shared_ptr<Entity> get_dynamic_entity_ptr(size_t idx) {return dynamic_entities[idx];}
-        std::shared_ptr<const Entity> get_static_entity_ptr(size_t idx) const {return static_entities[idx];}
-        std::shared_ptr<const Entity> get_dynamic_entity_ptr(size_t idx) const {return dynamic_entities[idx];}
-
-        size_t get_static_entities_size() const {return static_entities.size();}
-        size_t get_dynamic_entities_size() const {return dynamic_entities.size();}
-
-        void insert(std::shared_ptr<Entity> entity)
-        {
-            auto* entities = &static_entities;
-            if(entity->is_dynamic_entity())
-                entities = &dynamic_entities;
-
-            auto pos = entity->get_pos();
-            auto it = std::lower_bound(entities->begin(), entities->end(), pos.y, [](const std::shared_ptr<Entity>& a, float val){
-                return a->get_pos().y < val;
-            });
-            entities->insert(it, std::move(entity));
-        }
-
-        void erase(const std::shared_ptr<const Entity>& entity) 
-        {
-            auto* entities = &static_entities;
-            if(entity->is_dynamic_entity())
-                entities = &dynamic_entities;
-            
-            auto it = std::find(entities->begin(), entities->end(), entity);
-            if (it != entities->end())
-                entities->erase(it);
-        }
-};
 
 class Camera;
 class World;
@@ -77,6 +31,10 @@ class EntityManager
         static inline tools::POSs get_chunk_pos(const tools::POSf& pos) {return tools::POSs(pos) / Chunk::CHUNK_SIZE;}
         static inline tools::POSs get_chunk_pos(const std::shared_ptr<const Entity>& entity) {return tools::POSs(entity->get_pos()) / Chunk::CHUNK_SIZE;}
 
+        static inline tools::POSf get_relative_pos(tools::POSf&& pos) {return pos-get_chunk_pos(pos)*Chunk::CHUNK_SIZE;}
+        static inline tools::POSf get_relative_pos(const tools::POSf& pos) {return pos-get_chunk_pos(pos)*Chunk::CHUNK_SIZE;}
+
+        bool is_valid_chunk(const tools::POSi& chunk_pos) const;
 
         Chunk& get_chunk(const tools::POSs& pos);
         const Chunk& get_chunk(const tools::POSs& pos) const;
@@ -90,8 +48,10 @@ class EntityManager
 
         void update(const WindowManager& window_manager, const WorldManager& world_manager);
 
+        std::vector<std::shared_ptr<Entity>> find_collided_dynamic_entities(const Entity& entity);
+        bool is_collided(const Entity& entity);
 
-        void allot_player_keys(LetManager& let_manager);
+        void allot_player_keys(KeyboardManager& keyboard_Manager);
 
         Player& get_player();
         const Player& get_player() const;
