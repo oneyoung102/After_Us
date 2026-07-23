@@ -1,6 +1,6 @@
 #include "interactableEntity.hpp"
 
-InteractableEntity::InteractableEntity(const tools::POSf& pos, tools::POSf size)
+InteractableEntity::InteractableEntity(const tools::POSf& pos, float size)
     : Entity(pos, size)
     , __is_interacted(false)
 {} 

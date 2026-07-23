@@ -13,25 +13,24 @@ class MovingEntity : public Entity
 {
     private :
         AcceleratedMotion motion;
-        tools::POSf prev_pos;
     protected :
         static constexpr float DEFAULT_SPEED = 0.015;
         unsigned int ascendable_height;
 
         tools::Direction direction;
     public :
-        MovingEntity(const tools::POSf& pos, tools::POSf size = {1.f, 1.f}, float speed = DEFAULT_SPEED, unsigned int ascendable_height = 1);
+        MovingEntity(const tools::POSf& pos, float size = 1.f, float speed = DEFAULT_SPEED, unsigned int ascendable_height = 1);
         virtual ~MovingEntity() = default;
 
         virtual void update(const WindowManager& window_manager, const WorldManager& world_manager) override;
 
-        tools::POSf get_prev_pos() const;
+        tools::POSf get_next_pos() const;
+        bool is_moving() const;
+        void stop();
 
         float get_speed() const;
         void set_speed(float speed);
 
-        void move(const tools::POSf& pos);
-        void move(tools::POSf&& pos);
         void move_minimum_distance(const tools::POSf& pos) = delete;
         bool is_moveable_to(const World& world, const tools::POSf& pos);
 

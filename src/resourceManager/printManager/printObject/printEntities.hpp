@@ -1,6 +1,7 @@
 #pragma once
 
 #include "game/pageManager/pages/gamePage/gameManager/worldManager/entityManager/entity/entities/creature/creature.hpp"
+#include "game/pageManager/pages/gamePage/gameManager/worldManager/entityManager/entity/entities/fallenItem/fallenItem.hpp"
 #include "game/pageManager/pages/gamePage/gameManager/worldManager/worldManager.hpp"
 
 #include "main/windowManager/windowManager.hpp"
@@ -22,37 +23,35 @@ class PrintObject<Entity> : public PrintObjectInterface
         const EntityManager& entity_manager;
         std::vector<sf::Sprite> entity_sprites;
         
-        void print_not_creature(sf::RenderWindow& w, Shader& shader, const tools::POSf& screen_pos, const Entity& entity)
-        {
-            const auto& image_data = image_datas[entity.get_name()];
-            const auto tex_size = image_data.size();
-
-            sf::Sprite sprite = image_data.get_sprite();
-            sprite.setScale({scale, scale});
-            sprite.setTextureRect(sf::IntRect({0, 0}, {tex_size.x, tex_size.y}));     
-            sprite.setOrigin({tex_size.x / 2.f, tools::CASTf(tex_size.y)}); 
-            print_sprite(w,sprite,screen_pos,shader);
-        }
-        void print_creature(sf::RenderWindow& w, Shader& shader, const tools::POSf& screen_pos, const Creature& creature)
-        {
-            const auto& image_data = image_datas[creature.get_name()];
-            const auto tex_pos = image_data[creature.get_moving_state()];
-            const auto tex_size = image_data.size();
-
-            sf::Sprite sprite = image_data.get_sprite();
-            sprite.setScale({scale, scale});
-            sprite.setTextureRect(sf::IntRect({tex_pos.x, tex_pos.y}, {tex_size.x, tex_size.y}));      
-            sprite.setOrigin({tex_size.x / 2.f, tools::CASTf(tex_size.y)}); 
-            print_sprite(w,sprite,screen_pos,shader);
-        }
         
         void print_entity(sf::RenderWindow& w, Shader& shader, const tools::POSf& screen_pos, const Entity& entity)
         {
-            shader.set_brightness(shader.get_brightness_by_height(world.get_height(entity.get_pos()), world.get_height(camera.get_pos())));
-            if(entity.is_creature())
-                print_creature(w,shader,screen_pos,static_cast<const Creature&>(entity));
+            shader.set_brightness(shader.get_brightness_by_height(world.get_height(entity.get_pos()), world.get_height(camera.get_target_pos())));
+            
+            const auto& image_data = image_datas[entity.get_name()];
+            const auto tex_size = image_data.size();
+            const auto entity_size = entity.get_size();
+
+            sf::Sprite sprite = image_data.get_sprite();
+            sprite.setScale({entity_size*scale, entity_size*scale});
+
+            sprite.setOrigin({tex_size.x / 2.f, tools::CASTf(tex_size.y)}); 
+
+            if(auto creature = dynamic_cast<const Creature*>(&entity))
+            {
+                const auto tex_pos = image_data[creature->get_moving_state()];
+                sprite.setTextureRect(sf::IntRect({tex_pos.x, tex_pos.y}, {tex_size.x, tex_size.y}));
+            }
+            else if(auto item = dynamic_cast<const FallenItem*>(&entity))
+            {
+                const auto tex_pos = image_data[item->get_item_name()];
+                sprite.setTextureRect(sf::IntRect({tex_pos.x, tex_pos.y}, {tex_size.x, tex_size.y}));       
+            }
             else
-                print_not_creature(w,shader,screen_pos,entity);
+            {
+
+            }
+            print_sprite(w,sprite,screen_pos,shader);
         }
         
     public :

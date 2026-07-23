@@ -30,7 +30,7 @@ class Creature : public MovingEntity
         
     public :
         Creature(const tools::POSf& pos,
-            tools::POSf size,
+            float size,
             float speed,
             unsigned int ascendable_height,
             int max_health,

@@ -1,4 +1,5 @@
 #include "game/pageManager/pages/gamePage/gamePage.hpp"
+#include "game/keyManager/pointer/pointer.hpp"
 #include "game/pageManager/pageSignal.hpp"
 #include "game/pageManager/pages/gamePage/gameManager/worldManager/entityManager/entity/entities/camera/camera.hpp"
 #include "resourceManager/fileManager/fileManager.hpp"
@@ -37,6 +38,8 @@ GamePage::GamePage(const FileManager& file_manager)
         );
     });
     camera.target(entity_manager.get_player_ptr());
+
+    entity_manager.register_entity(std::make_unique<FallenItem>(tools::POSf(1.4,2.5), FallenItem::ItemName::apple));
 }
 
 PageSignal GamePage::proceed_page(FileManager& file_manager, WindowManager& window_manager)

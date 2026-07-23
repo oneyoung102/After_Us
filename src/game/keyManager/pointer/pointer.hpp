@@ -13,6 +13,8 @@ class Pointer : public Entity
 
         void focus(bool value);
         bool is_focusing() const;
+
+        virtual tools::POSf get_hitbox() const override;
         
         virtual EntityName get_name() const override { return EntityName::pointer; }
         virtual void update(const WindowManager& window_manager, const WorldManager& world_manager) override;

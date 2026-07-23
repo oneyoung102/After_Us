@@ -18,6 +18,9 @@ class Camera : public MovingEntity
         Camera(std::shared_ptr<const Entity> entity = nullptr);
 
         tools::POSf get_pos() const;
+        tools::POSf get_target_pos() const;
+
+        virtual tools::POSf get_hitbox() const override;
         
         void target(std::shared_ptr<const Entity> entity);
         void untarget();

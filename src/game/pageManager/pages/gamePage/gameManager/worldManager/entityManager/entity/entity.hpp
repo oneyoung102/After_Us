@@ -15,24 +15,26 @@ class Entity
             camera,
             player,
             pointer,
+            fallen_item,
             COUNT
         };
     protected :
         tools::POSf pos;
-        tools::POSf size;
+        float size;
         ENTITY_CODE entity_code;
     public :
-        Entity(const tools::POSf& pos, tools::POSf size);
+        Entity(const tools::POSf& pos, float size = 1.0);
         virtual ~Entity() = default;
 
         virtual void update(const WindowManager& window_manager, const WorldManager& world_manager) {}
 
         tools::POSf get_pos() const;
-        tools::POSf get_size() const;
+        virtual tools::POSf get_hitbox() const = 0;
+        float get_size() const;
 
         void set_pos(const tools::POSf& pos);
         void set_pos(tools::POSf&& pos);
-        void set_size(const tools::POSf& size);
+        void set_size(float size);
 
         bool is_registered() const;
         ENTITY_CODE get_entity_code() const;

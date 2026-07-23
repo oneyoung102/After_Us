@@ -42,14 +42,14 @@ class EntityManager
 
         void register_entity(std::shared_ptr<Entity> entity);
         void unregister_entity(const std::shared_ptr<const Entity>& entity);
-        void move_entity(const tools::POSf& prev_pos, const std::shared_ptr<Entity>& entity);
+        void reregister_entity(const tools::POSf& prev_pos, const std::shared_ptr<Entity>& entity);
 
         std::pair<tools::POSs,tools::POSs> get_update_chunk_range(const World& world, const Camera& camera) const;
 
         void update(const WindowManager& window_manager, const WorldManager& world_manager);
 
         std::vector<std::shared_ptr<Entity>> find_collided_dynamic_entities(const Entity& entity);
-        bool is_collided(const Entity& entity);
+        bool test_collision(const Entity& entity);
 
         void allot_player_keys(KeyboardManager& keyboard_Manager);
 

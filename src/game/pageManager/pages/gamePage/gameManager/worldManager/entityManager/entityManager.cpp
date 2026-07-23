@@ -1,6 +1,8 @@
 #include "entityManager.hpp"
 #include "game/keyManager/keyboardManager.hpp"
 #include "game/pageManager/pages/gamePage/gameManager/worldManager/entityManager/entity/entities/camera/camera.hpp"
+#include "game/pageManager/pages/gamePage/gameManager/worldManager/entityManager/entity/entities/fallenItem/fallenItem.hpp"
+#include "game/pageManager/pages/gamePage/gameManager/worldManager/entityManager/entity/interactableEntity/interactableEntity.hpp"
 #include "game/pageManager/pages/gamePage/gameManager/worldManager/worldManager.hpp"
 #include "main/windowManager/windowManager.hpp"
 #include "tools/cast.hpp"
@@ -60,15 +62,12 @@ void EntityManager::unregister_entity(const std::shared_ptr<const Entity>& entit
             player.reset();
 }
 
-void EntityManager::move_entity(const tools::POSf& prev_pos, const std::shared_ptr<Entity>& entity)
+void EntityManager::reregister_entity(const tools::POSf& next_pos, const std::shared_ptr<Entity>& entity)
 {
-    const auto pos = entity->get_pos();
     const auto chunk_pos = get_chunk_pos(entity);
-    const auto prev_chunk_pos = get_chunk_pos(prev_pos);
-    if(prev_pos == pos || prev_chunk_pos == chunk_pos && prev_pos.y == pos.y)
-        return;
-    get_chunk(prev_chunk_pos).erase(entity);
-    get_chunk(chunk_pos).insert(entity);
+    const auto next_chunk_pos = get_chunk_pos(next_pos);
+    get_chunk(chunk_pos).erase(entity);
+    get_chunk(next_chunk_pos).insert(entity);
 }
 
 std::pair<tools::POSs,tools::POSs> EntityManager::get_update_chunk_range(const World& world, const Camera& camera) const
@@ -107,7 +106,29 @@ void EntityManager::update(const WindowManager& window_manager, const WorldManag
                 }
                 if(auto moving_entity = std::dynamic_pointer_cast<MovingEntity>(entity_ptr))
                 {
-                    move_entity(moving_entity->get_prev_pos(), moving_entity);
+                    if(moving_entity->is_moving())
+                    {
+                        auto next_pos = moving_entity->get_next_pos();
+                        if(moving_entity->is_moveable_to(world_manager.get_world(), next_pos))
+                        {
+                            auto prev_pos = moving_entity->get_pos();
+                            moving_entity->set_pos(next_pos);
+                            if(test_collision(*moving_entity))
+                            {
+                                moving_entity->set_pos(prev_pos);
+                                moving_entity->stop();
+                            }
+                            else
+                                reregister_entity(next_pos, moving_entity);
+                        }
+                        else
+                            moving_entity->stop();
+                    }
+                }
+                if(auto item = std::dynamic_pointer_cast<FallenItem>(entity_ptr))
+                {
+                    if(item->is_interacted())
+                        unregister_entity(entity_ptr);
                 }
             }
         }
@@ -145,7 +166,7 @@ std::vector<std::shared_ptr<Entity>> EntityManager::find_collided_dynamic_entiti
     
     return collided_entities;
 }
-bool EntityManager::is_collided(const Entity& entity)
+bool EntityManager::test_collision(const Entity& entity)
 {
     const tools::POSi chunk_pos = get_chunk_pos(entity.get_pos());
 
@@ -160,8 +181,7 @@ bool EntityManager::is_collided(const Entity& entity)
     for (size_t row = start.r; row <= end.r; ++row)
         for (size_t col = start.c; col <= end.c; ++col)
         {
-            tools::POSs chunk_pos(col, row);
-            auto& chunk = get_chunk(chunk_pos);
+            const auto& chunk = get_chunk({col,row});
             
             for(size_t i = 0; i < chunk.get_static_entities_size(); ++i)
                 if(entity.is_collided(chunk.get_static_entity(i)))

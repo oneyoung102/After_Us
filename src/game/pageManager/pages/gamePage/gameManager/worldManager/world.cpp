@@ -4,7 +4,10 @@
 World::World()
     : world(WORLD_TYPE(1000, std::vector<ELEMENT_TYPE>(1000, {Tile::GRASS_1, 0})))
     , world_size(tools::POSs(1000, 1000))
-{}
+{
+    world[1][2].second = 2;
+    world[2][1].second = 1;
+}
 
 World::World(WORLD_TYPE&& world)
     : world(std::move(world))

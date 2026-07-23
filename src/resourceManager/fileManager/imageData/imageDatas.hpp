@@ -1,6 +1,7 @@
 #pragma once
 
 #include "game/pageManager/pages/gamePage/gameManager/worldManager/entityManager/entity/entities/creature/creature.hpp"
+#include "game/pageManager/pages/gamePage/gameManager/worldManager/entityManager/entity/entities/fallenItem/fallenItem.hpp"
 #include "game/pageManager/pages/gamePage/gameManager/worldManager/entityManager/entity/entity.hpp"
 #include "imageData.hpp"
 #include <tuple>
@@ -11,6 +12,7 @@
 class WorldImageData;
 class PlayerImageData;
 class PointerImageData;
+class ItemImageData;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -22,7 +24,8 @@ class ImageDatas
         using ImageClassList = std::tuple<
             WorldImageData,
             PlayerImageData,
-            PointerImageData
+            PointerImageData,
+            ItemImageData
         >;
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // 3rd 여기에 이미지 명 추가 (반드시 이미지 파일 순서와 맞게)
@@ -31,6 +34,7 @@ class ImageDatas
             world,
             player,
             pointer,
+            item,
             COUNT
         };
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -82,6 +86,9 @@ class ImageDatas
                 case Entity::EntityName::player:
                     image = Name::player;
                     break;
+                case Entity::EntityName::fallen_item:
+                    image = Name::item;
+                    break;
                 default:
                     throw std::runtime_error("Your EntityName was not mapped to image name");
             }
@@ -116,7 +123,7 @@ class WorldImageData : public ImageData
 class PlayerImageData : public ImageData
 {
     public :
-        static constexpr ImageSize PLAYER_SIZE = {47,128};
+        static constexpr ImageSize PLAYER_SIZE = {64,128};
 
         using CroppedImageName = Creature::MovingState;
 
@@ -160,6 +167,22 @@ class PointerImageData : public ImageData
         }  
 
         static constexpr ImageDatas::Name name = ImageDatas::Name::pointer;
+};
+
+class ItemImageData : public ImageData
+{
+    public :
+        static constexpr ImageSize ITEM_SIZE = {64,64};
+
+        using CroppedImageName = FallenItem::ItemName;
+
+        ItemImageData(sf::Texture&& texture)
+            : ImageData(std::move(texture),ITEM_SIZE)
+        {
+            add_cropped_image_data(CroppedImageName::apple, {0,0});
+        }  
+
+        static constexpr ImageDatas::Name name = ImageDatas::Name::item;
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////

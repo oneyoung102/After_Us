@@ -10,7 +10,7 @@ class InteractableEntity : public Entity
     protected :
         bool __is_interacted;
     public :
-        InteractableEntity(const tools::POSf& pos, tools::POSf size = {1.f, 1.f});
+        InteractableEntity(const tools::POSf& pos, float size = 1.f);
         virtual ~InteractableEntity() = default;
 
         virtual void update(const WindowManager& window_manager, const WorldManager& world_manager) override;

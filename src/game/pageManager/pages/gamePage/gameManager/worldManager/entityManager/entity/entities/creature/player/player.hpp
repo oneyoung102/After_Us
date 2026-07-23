@@ -20,6 +20,9 @@ class Player : public Creature
 
         virtual void update(const WindowManager& window_manager, const WorldManager& world_manager) override;
 
+        virtual tools::POSf get_hitbox() const override;
+
+        void interact(const tools::POSf& pointer_pos, const std::function<std::vector<std::shared_ptr<Entity>>()>& find_collided_entites_by_pointer);
         void main_hand_action(const tools::POSf& pointer_pos, const std::function<std::vector<std::shared_ptr<Entity>>()>& find_collided_entites_by_pointer);
         void off_hand_action(const tools::POSf& pointer_pos, const std::function<std::vector<std::shared_ptr<Entity>>()>& find_collided_entites_by_pointer);
         

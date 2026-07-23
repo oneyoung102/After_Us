@@ -32,14 +32,14 @@ class PrintObject<Pointer> : public PrintObjectInterface
                 return;
 
             const auto& pointer = mouse_manager.get_pointer();
-            const tools::POSf scale = pointer.get_size() * WindowManager::get_scale(camera);
+            const auto scale = WindowManager::get_scale(camera)*pointer.get_size();
             
             const auto crop_name = pointer.is_focusing() ? PointerImageData::CroppedImageName::FOCUSING : PointerImageData::CroppedImageName::UNFOCUSING;
             const auto tex_pos = pointer_image_data[crop_name];
             const auto tex_size = pointer_image_data.size();
 
             sf::Sprite tile_sprite = pointer_image_data.get_sprite();
-            tile_sprite.setScale({scale.x, scale.y});
+            tile_sprite.setScale({scale, scale});
             tile_sprite.setTextureRect(sf::IntRect({tex_pos.x, tex_pos.y}, {tex_size.x, tex_size.y}));
             tile_sprite.setOrigin({tex_size.x / 2.f, tex_size.y / 2.f});
 

@@ -55,7 +55,7 @@ class PrintObject<World> : public PrintObjectInterface
                     const auto draw_pos = world_origin_in_screen + (tools::POSf(npos) * scaled_tile_size);
                     const auto tile_code = world[tools::POSs(npos)];
 
-                    shader.set_brightness(shader.get_brightness_by_height(world.get_height(npos), world.get_height(camera.get_pos())));
+                    shader.set_brightness(shader.get_brightness_by_height(world.get_height(npos), world.get_height(camera.get_target_pos())));
                     print_tile(w, shader, draw_pos, tile_code);
                 }
                 
