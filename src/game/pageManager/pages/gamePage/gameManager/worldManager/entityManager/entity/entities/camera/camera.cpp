@@ -18,7 +18,8 @@ tools::POSf Camera::get_target_pos() const
     return pos;
 }
 
-tools::POSf Camera::get_hitbox() const {return {0,0};}
+tools::POSf Camera::get_hitbox() const {return hitbox*size;}
+tools::POSf Camera::get_pointer_hitbox() const {return pointer_hitbox*size;}
 
 void Camera::target(std::shared_ptr<const Entity> entity)
 {

@@ -5,11 +5,17 @@
 #include <functional>
 
 class WorldManager;
+class World;
+
+#define __HAND_ACTION_ARGUMENTS const tools::POSf& pointer_pos, const World& world, const std::function<std::vector<std::shared_ptr<Entity>>()>& find_collided_entites_by_pointer
 
 class Player : public Creature
 {
     private:
-        using HAND_ACTION_TYPE = std::function<void(const tools::POSf&, const std::function<std::vector<std::shared_ptr<Entity>>()>&)>;
+        static constexpr tools::POSf hitbox = {1, 0.5};
+        static constexpr tools::POSf pointer_hitbox = {1, 2};
+
+        using HAND_ACTION_TYPE = std::function<void(__HAND_ACTION_ARGUMENTS)>;
         HAND_ACTION_TYPE __main_hand_action, __off_hand_action;
         float reach;
     public:
@@ -18,15 +24,15 @@ class Player : public Creature
         void set_reach(float reach);
         float get_reach() const;
 
+        virtual tools::POSf get_hitbox() const override;
+        virtual tools::POSf get_pointer_hitbox() const override;
+
         virtual void update(const WindowManager& window_manager, const WorldManager& world_manager) override;
 
-        virtual tools::POSf get_hitbox() const override;
-
-        void interact(const tools::POSf& pointer_pos, const std::function<std::vector<std::shared_ptr<Entity>>()>& find_collided_entites_by_pointer);
-        void main_hand_action(const tools::POSf& pointer_pos, const std::function<std::vector<std::shared_ptr<Entity>>()>& find_collided_entites_by_pointer);
-        void off_hand_action(const tools::POSf& pointer_pos, const std::function<std::vector<std::shared_ptr<Entity>>()>& find_collided_entites_by_pointer);
+        void interact(__HAND_ACTION_ARGUMENTS);
+        void main_hand_action(__HAND_ACTION_ARGUMENTS);
+        void off_hand_action(__HAND_ACTION_ARGUMENTS);
         
-        virtual bool is_player() const override {return true;}
         
         virtual EntityName get_name() const override {return EntityName::player;}    
 };

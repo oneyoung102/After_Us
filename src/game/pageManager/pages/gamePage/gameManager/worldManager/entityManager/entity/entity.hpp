@@ -1,5 +1,6 @@
 #pragma once
 
+#include "game/pageManager/pages/gamePage/gameManager/worldManager/world.hpp"
 #include "tools/pos.hpp"
 
 class WorldManager;
@@ -29,7 +30,8 @@ class Entity
         virtual void update(const WindowManager& window_manager, const WorldManager& world_manager) {}
 
         tools::POSf get_pos() const;
-        virtual tools::POSf get_hitbox() const = 0;
+        virtual tools::POSf get_hitbox() const = 0; // hitbox * size
+        virtual tools::POSf get_pointer_hitbox() const = 0; // pointer_hitbox * size
         float get_size() const;
 
         void set_pos(const tools::POSf& pos);
@@ -40,17 +42,16 @@ class Entity
         ENTITY_CODE get_entity_code() const;
         void set_entity_code(ENTITY_CODE entity_code);
 
-        bool is_collided(const Entity& entity) const;
+        virtual bool is_collided(const Entity& entity, const World& world) const;
 
         virtual EntityName get_name() const = 0;
 
         inline bool operator==(const Entity& entity) const {return entity_code == entity.entity_code;}
 
-        virtual bool is_camera() const {return false;}
         virtual bool is_creature() const {return false;}
         virtual bool is_fallen_item() const {return false;}
-        virtual bool is_player() const {return false;}
         virtual bool is_interactable_entity() const {return false;}
+        virtual bool is_thing() const {return false;}
         virtual bool is_moving_entity() const {return false;}
 
         bool is_dynamic_entity() const {return is_interactable_entity() || is_moving_entity();}

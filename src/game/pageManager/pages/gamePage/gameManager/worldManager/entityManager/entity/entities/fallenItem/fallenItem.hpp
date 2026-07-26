@@ -10,13 +10,20 @@ class FallenItem : public InteractableEntity
             apple,
             COUNT
         };
+        
+    private :
+        static constexpr tools::POSf hitbox = {1.0, 0.5};
+        static constexpr tools::POSf pointer_hitbox = {1.0, 1.0};
+        
         const ItemName item_name;
-
+    public :
+    
         FallenItem(const tools::POSf& pos, ItemName item_name);
 
-        ItemName get_item_name() const;
-
         virtual tools::POSf get_hitbox() const override;
+        virtual tools::POSf get_pointer_hitbox() const override;
+
+        ItemName get_item_name() const;
 
         virtual ~FallenItem() = default;
         virtual bool is_fallen_item() const override {return true;}

@@ -15,7 +15,6 @@ void MovingEntity::update(const WindowManager& window_manager, const WorldManage
 {
     (void)window_manager; 
     motion.accel();
-    //if(motion.is_moving()) -> 발스테이트 = stop
 }
 
 tools::POSf MovingEntity::get_next_pos() const {return pos+motion.get_vector();}
@@ -30,7 +29,7 @@ float MovingEntity::get_speed() const {return motion.get_speed();}
 
 bool MovingEntity::is_moveable_to(const World& world, const tools::POSf& pos)
 {
-    const auto hitbox = get_hitbox();
+    const auto hitbox = get_hitbox()/2.0;
     const auto start = tools::POSi(floor(pos.c - hitbox.c), floor(pos.r - hitbox.r));
     const auto end = tools::POSi(pos.c + hitbox.c, pos.r + hitbox.r);
 

@@ -14,6 +14,10 @@ class Camera : public MovingEntity
     private :
         std::weak_ptr<const Entity> tracing_entity;
         float altitude;
+
+        static constexpr tools::POSf hitbox = {0.0, 0.0};
+        static constexpr tools::POSf pointer_hitbox = {0.0, 0.0};
+
     public : 
         Camera(std::shared_ptr<const Entity> entity = nullptr);
 
@@ -21,6 +25,8 @@ class Camera : public MovingEntity
         tools::POSf get_target_pos() const;
 
         virtual tools::POSf get_hitbox() const override;
+        virtual tools::POSf get_pointer_hitbox() const override;
+
         
         void target(std::shared_ptr<const Entity> entity);
         void untarget();
@@ -35,7 +41,6 @@ class Camera : public MovingEntity
 
         virtual EntityName get_name() const override { return EntityName::camera; }
 
-        virtual bool is_camera() const override {return true;}
         virtual void update(const WindowManager& window_manager, const WorldManager& world_manager) override
         {
             MovingEntity::update(window_manager, world_manager);

@@ -6,6 +6,7 @@ World::World()
     , world_size(tools::POSs(1000, 1000))
 {
     world[1][2].second = 2;
+    world[2][2].second = 2;
     world[2][1].second = 1;
 }
 

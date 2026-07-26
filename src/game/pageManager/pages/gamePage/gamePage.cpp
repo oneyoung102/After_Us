@@ -23,23 +23,25 @@ GamePage::GamePage(const FileManager& file_manager)
     entity_manager.allot_player_keys(keyboard_manager);//키보드 메니져에 메핑 만들고 그 클래스에 위임
     mouse_manager.allot_key(sf::Mouse::Button::Left, [this, &entity_manager](){
         entity_manager.get_player().main_hand_action(
-            mouse_manager.get_pointer().get_pos(),
+            mouse_manager.get_pointer().get_pos(), world_manager.get_world(),
             [this,&entity_manager](){
-                return entity_manager.find_collided_dynamic_entities(mouse_manager.get_pointer());
+                return entity_manager.find_collided_dynamic_entities(mouse_manager.get_pointer(), world_manager.get_world());
             }
         );
     });
     mouse_manager.allot_key(sf::Mouse::Button::Right, [this, &entity_manager](){
         entity_manager.get_player().off_hand_action(
-            mouse_manager.get_pointer().get_pos(),
+            mouse_manager.get_pointer().get_pos(), world_manager.get_world(),
             [this,&entity_manager](){
-                return entity_manager.find_collided_dynamic_entities(mouse_manager.get_pointer());
+                return entity_manager.find_collided_dynamic_entities(mouse_manager.get_pointer(), world_manager.get_world());
             }
         );
     });
     camera.target(entity_manager.get_player_ptr());
 
     entity_manager.register_entity(std::make_unique<FallenItem>(tools::POSf(1.4,2.5), FallenItem::ItemName::apple));
+    entity_manager.register_entity(std::make_unique<FallenItem>(tools::POSf(2.3,1.25), FallenItem::ItemName::apple));
+    entity_manager.register_entity(std::make_unique<FallenItem>(tools::POSf(2.5,1.5), FallenItem::ItemName::apple));
 }
 
 PageSignal GamePage::proceed_page(FileManager& file_manager, WindowManager& window_manager)

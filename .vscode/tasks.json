@@ -52,7 +52,15 @@
                 "-lsfml-graphics",
                 "-lsfml-window",
                 "-lsfml-system",
-                "-lsfml-audio"
+                "-lsfml-audio",
+                "-framework",
+                "OpenGL",
+                "-framework",
+                "AppKit",
+                "-framework",
+                "IOKit",
+                "-framework",
+                "CoreVideo"
             ],
             "options": {
                 "cwd": "${workspaceFolder}"

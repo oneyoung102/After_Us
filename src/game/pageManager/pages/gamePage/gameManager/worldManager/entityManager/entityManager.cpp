@@ -62,12 +62,13 @@ void EntityManager::unregister_entity(const std::shared_ptr<const Entity>& entit
             player.reset();
 }
 
-void EntityManager::reregister_entity(const tools::POSf& next_pos, const std::shared_ptr<Entity>& entity)
+void EntityManager::reregister_entity(const std::shared_ptr<Entity>& entity, const tools::POSf& next_pos)
 {
     const auto chunk_pos = get_chunk_pos(entity);
     const auto next_chunk_pos = get_chunk_pos(next_pos);
     get_chunk(chunk_pos).erase(entity);
     get_chunk(next_chunk_pos).insert(entity);
+    entity->set_pos(next_pos);
 }
 
 std::pair<tools::POSs,tools::POSs> EntityManager::get_update_chunk_range(const World& world, const Camera& camera) const
@@ -111,15 +112,10 @@ void EntityManager::update(const WindowManager& window_manager, const WorldManag
                         auto next_pos = moving_entity->get_next_pos();
                         if(moving_entity->is_moveable_to(world_manager.get_world(), next_pos))
                         {
-                            auto prev_pos = moving_entity->get_pos();
-                            moving_entity->set_pos(next_pos);
-                            if(test_collision(*moving_entity))
-                            {
-                                moving_entity->set_pos(prev_pos);
+                            if(test_collision(*moving_entity, next_pos, world_manager.get_world()))
                                 moving_entity->stop();
-                            }
                             else
-                                reregister_entity(next_pos, moving_entity);
+                                reregister_entity(moving_entity, next_pos);
                         }
                         else
                             moving_entity->stop();
@@ -135,7 +131,7 @@ void EntityManager::update(const WindowManager& window_manager, const WorldManag
     }
 }
 
-std::vector<std::shared_ptr<Entity>> EntityManager::find_collided_dynamic_entities(const Entity& entity)
+std::vector<std::shared_ptr<Entity>> EntityManager::find_collided_dynamic_entities(const Entity& entity, const World& world)
 {
     std::vector<std::shared_ptr<Entity>> collided_entities;
     const tools::POSi chunk_pos = get_chunk_pos(entity.get_pos());
@@ -154,10 +150,10 @@ std::vector<std::shared_ptr<Entity>> EntityManager::find_collided_dynamic_entiti
             tools::POSs chunk_pos(col, row);
             auto& chunk = get_chunk(chunk_pos);
             
-            auto condition = [&entity](const Entity& object){
+            auto condition = [&entity, &world](const Entity& object){
                 if (object == entity)
                     return false;
-                return entity.is_collided(object);
+                return entity.is_collided(object, world);
             };
             
             auto dynamic_entities = chunk.find_dynamic_entities(condition);
@@ -166,7 +162,9 @@ std::vector<std::shared_ptr<Entity>> EntityManager::find_collided_dynamic_entiti
     
     return collided_entities;
 }
-bool EntityManager::test_collision(const Entity& entity)
+
+
+bool EntityManager::test_collision(const Entity& entity, const World& world)
 {
     const tools::POSi chunk_pos = get_chunk_pos(entity.get_pos());
 
@@ -184,14 +182,22 @@ bool EntityManager::test_collision(const Entity& entity)
             const auto& chunk = get_chunk({col,row});
             
             for(size_t i = 0; i < chunk.get_static_entities_size(); ++i)
-                if(entity.is_collided(chunk.get_static_entity(i)))
+                if(entity.is_collided(chunk.get_static_entity(i),world))
                     return true;
             for(size_t i = 0; i < chunk.get_dynamic_entities_size(); ++i)
-                if(entity.is_collided(chunk.get_dynamic_entity(i)))
+                if(entity.is_collided(chunk.get_dynamic_entity(i),world))
                     return true;
         } 
     
     return false;
+}
+bool EntityManager::test_collision(Entity& entity, const tools::POSf& pos, const World& world)
+{
+    auto prev_pos = entity.get_pos();
+    entity.set_pos(pos);
+    const bool is_collided = test_collision(entity, world);
+    entity.set_pos(std::move(prev_pos));
+    return is_collided;
 }
 
 

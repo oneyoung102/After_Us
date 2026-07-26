@@ -4,7 +4,7 @@
 
 Creature::Creature(const tools::POSf& pos,
             float size,
-            float speed,
+            float speed,        
             unsigned int ascendable_height,
             int max_health,
             int health,
@@ -102,4 +102,15 @@ void Creature::untarget(){ __target.reset();}
 void Creature::update(const WindowManager& window_manager, const WorldManager& world_manager)
 {
     MovingEntity::update(window_manager, world_manager);
+    if(is_moving()) //임시
+    {
+        if(foot_state == FootState::stop)
+            foot_state = FootState::left_foot;
+        else if(foot_state == FootState::left_foot)
+            foot_state = FootState::right_foot;
+        else
+            foot_state = FootState::left_foot;
+    }
+    else
+        foot_state = FootState::stop;
 }
