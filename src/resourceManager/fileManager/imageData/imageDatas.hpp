@@ -2,6 +2,7 @@
 
 #include "game/pageManager/pages/gamePage/gameManager/worldManager/entityManager/entity/entities/creature/creature.hpp"
 #include "game/pageManager/pages/gamePage/gameManager/worldManager/entityManager/entity/entities/fallenItem/fallenItem.hpp"
+#include "game/pageManager/pages/gamePage/gameManager/worldManager/entityManager/entity/entities/thing/tree.hpp"
 #include "game/pageManager/pages/gamePage/gameManager/worldManager/entityManager/entity/entity.hpp"
 #include "imageData.hpp"
 #include <tuple>
@@ -13,6 +14,7 @@ class WorldImageData;
 class PlayerImageData;
 class PointerImageData;
 class ItemImageData;
+class TreesImageData;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -25,7 +27,8 @@ class ImageDatas
             WorldImageData,
             PlayerImageData,
             PointerImageData,
-            ItemImageData
+            ItemImageData,
+            TreesImageData
         >;
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // 3rd 여기에 이미지 명 추가 (반드시 이미지 파일 순서와 맞게)
@@ -35,6 +38,7 @@ class ImageDatas
             player,
             pointer,
             item,
+            trees,
             COUNT
         };
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -89,6 +93,9 @@ class ImageDatas
                 case Entity::EntityName::fallen_item:
                     image = Name::item;
                     break;
+                case Entity::EntityName::tree:
+                    image = Name::trees;
+                    break;
                 default:
                     throw std::runtime_error("Your EntityName was not mapped to image name");
             }
@@ -107,15 +114,25 @@ class WorldImageData : public ImageData
 {
     public :
         static constexpr ImageSize TILE_SIZE = {64,64};
-        using CroppedImageName = World::Tile;
+        using CroppedImageName = Tile::TileName;
 
         WorldImageData(sf::Texture&& texture)
             : ImageData(std::move(texture),TILE_SIZE)
         {
-            add_cropped_image_data(CroppedImageName::GRASS_1, {0,0});
-            add_cropped_image_data(CroppedImageName::GRASS_2, {1,0});
-            add_cropped_image_data(CroppedImageName::GRASS_3, {2,0});
-            add_cropped_image_data(CroppedImageName::CULTIVATE, {0,1});
+            add_cropped_image_data(CroppedImageName::GRASS, {0,0});
+            add_cropped_image_data(CroppedImageName::DIRT, {1,0});
+            add_cropped_image_data(CroppedImageName::SAND, {2,0});
+            add_cropped_image_data(CroppedImageName::GRAVEL, {3,0});
+            add_cropped_image_data(CroppedImageName::WATER, {0,1});
+            add_cropped_image_data(CroppedImageName::WATER_2nd_FRAME, {1,1});
+            add_cropped_image_data(CroppedImageName::WATER_3rd_FRAME, {2,1});
+            add_cropped_image_data(CroppedImageName::WATER_4th_FRAME, {3,1});
+            add_cropped_image_data(CroppedImageName::WATER_5th_FRAME, {4,1});
+            add_cropped_image_data(CroppedImageName::WATER_6th_FRAME, {5,1});
+            add_cropped_image_data(CroppedImageName::WATER_7th_FRAME, {6,1});
+            add_cropped_image_data(CroppedImageName::WATER_8th_FRAME, {7,1});
+            add_cropped_image_data(CroppedImageName::CULTIVATE, {0,2});
+            add_cropped_image_data(CroppedImageName::STONE_BRICK, {1,2});
         }  
         static constexpr ImageDatas::Name name = ImageDatas::Name::world;
 };
@@ -183,6 +200,26 @@ class ItemImageData : public ImageData
         }  
 
         static constexpr ImageDatas::Name name = ImageDatas::Name::item;
+};
+
+class TreesImageData : public ImageData
+{
+    public :
+        static constexpr ImageSize TREE_SIZE = {320,320};
+        using CroppedImageName = Tree::TreeName;
+
+        TreesImageData(sf::Texture&& texture)
+            : ImageData(std::move(texture),TREE_SIZE)
+        {
+            add_cropped_image_data(CroppedImageName::TREE1, {0,0});
+            add_cropped_image_data(CroppedImageName::TREE2, {1,0});
+            add_cropped_image_data(CroppedImageName::TREE3, {2,0});
+            add_cropped_image_data(CroppedImageName::TREE4, {3,0});
+            add_cropped_image_data(CroppedImageName::TREE5, {4,0});
+            add_cropped_image_data(CroppedImageName::TREE6, {5,0});
+            add_cropped_image_data(CroppedImageName::TREE7, {6,0});
+        }  
+        static constexpr ImageDatas::Name name = ImageDatas::Name::trees;
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////

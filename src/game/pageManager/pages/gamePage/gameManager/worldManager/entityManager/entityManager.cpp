@@ -23,15 +23,15 @@ EntityManager::EntityManager(const World& world, std::vector<std::unique_ptr<Ent
 
 Chunk& EntityManager::get_chunk(const tools::POSs& pos)
 {
-    return chunks[pos.r][pos.c];
+    return chunks.at(pos.r).at(pos.c);
 }
 const Chunk& EntityManager::get_chunk(const tools::POSs& pos) const
 {
-    return chunks[pos.r][pos.c];
+    return chunks.at(pos.r).at(pos.c);
 }
 tools::POSs EntityManager::get_chunks_size() const
 {
-    return tools::POSs(chunks[0].size(),chunks.size());
+    return tools::POSs(chunks.at(0).size(),chunks.size());
 }
 
 bool EntityManager::is_valid_chunk(const tools::POSi& chunk_pos) const

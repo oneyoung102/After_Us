@@ -3,7 +3,7 @@
 #include "game/pageManager/pages/gamePage/gameManager/worldManager/worldManager.hpp"
 
 Player::Player(const tools::POSf& pos)
-    : Creature(pos, 0.9f, DEFAULT_SPEED, 1, 100, 100, 10, 10, 0.4f, 10.0f)
+    : Creature(pos, 0.9f, 0.02, 1, 100, 100, 10, 10, 0.4f, 10.0f)
 {
     set_reach(0.75);
     __main_hand_action = [this](__HAND_ACTION_ARGUMENTS){
@@ -48,14 +48,14 @@ void Player::interact(__HAND_ACTION_ARGUMENTS)
 void Player::main_hand_action(__HAND_ACTION_ARGUMENTS) {
     if(!__main_hand_action)
         return;
-    if(std::abs(world.get_height(this->get_pos()) - world.get_height(pointer_pos)) > ascendable_height)
+    if(std::abs(world[this->get_pos()].height - world[pointer_pos].height) > ascendable_height)
         return;
     __main_hand_action(pointer_pos,world,find_collided_entites_by_pointer);
 }
 void Player::off_hand_action(__HAND_ACTION_ARGUMENTS) {
     if(!__off_hand_action)
         return;
-    if(std::abs(world.get_height(this->get_pos()) - world.get_height(pointer_pos)) > ascendable_height)
+    if(std::abs(world[this->get_pos()].height - world[pointer_pos].height) > ascendable_height)
         return;
     __off_hand_action(pointer_pos,world,find_collided_entites_by_pointer);
 }

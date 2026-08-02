@@ -4,9 +4,10 @@ namespace tools
 {
     class Tick
     {
+        private :
+            int tick;
         public:
             static constexpr int FRAMERATE = 120;
-            int tick;
 
             Tick(float second = 0)
                 : tick(second*FRAMERATE)
@@ -19,17 +20,17 @@ namespace tools
             operator float() const {return tick;}
 
 
-            Tick operator+(int value) const {return Tick(tick+value);}
-            Tick operator-(int value) const {return Tick(tick-value);}
-            Tick operator*(int value) const {return Tick(tick*value);}
-            Tick operator/(int value) const {return Tick((tick+0.0)/value);}
-            Tick operator%(int value) const {return Tick(tick%value);}
+            int operator+(int value) const {return tick+value;}
+            int operator-(int value) const {return tick-value;}
+            int operator*(int value) const {return tick*value;}
+            int operator/(int value) const {return (tick+0.0)/value;}
+            int operator%(int value) const {return tick%value;}
 
-            Tick operator+(const Tick& other) const {return Tick(tick+other.tick);}
-            Tick operator-(const Tick& other) const {return Tick(tick-other.tick);}
-            Tick operator*(const Tick& other) const {return Tick(tick*other.tick);}
-            Tick operator/(const Tick& other) const {return Tick((tick+0.0)/other.tick);}
-            Tick operator%(const Tick& other) const {return Tick(tick%other.tick);}
+            int operator+(const Tick& other) const {return tick+other.tick;}
+            int operator-(const Tick& other) const {return tick-other.tick;}
+            int operator*(const Tick& other) const {return tick*other.tick;}
+            int operator/(const Tick& other) const {return (tick+0.0)/other.tick;}
+            int operator%(const Tick& other) const {return tick%other.tick;}
 
             Tick& operator+=(int value) noexcept {tick += value; return *this;}
             Tick& operator-=(int value) noexcept {tick -= value; return *this;}
@@ -64,5 +65,6 @@ namespace tools
 
             static float to_second(int value){return (float)value/FRAMERATE;}
             float to_second() const {return (float)tick/FRAMERATE;}
+            
     };
 }

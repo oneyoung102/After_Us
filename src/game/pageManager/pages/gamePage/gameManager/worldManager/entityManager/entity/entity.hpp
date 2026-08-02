@@ -17,6 +17,7 @@ class Entity
             player,
             pointer,
             fallen_item,
+            tree,
             COUNT
         };
     protected :

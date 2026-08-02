@@ -19,10 +19,15 @@ class PrintObject<World> : public PrintObjectInterface
         const World& world;
         const Camera& camera;
 
-        void print_tile(sf::RenderWindow& w, Shader& shader, const tools::POSf& screen_pos, World::Tile tile_code)
+        tools::Tick wave;
+
+        void print_tile(sf::RenderWindow& w, Shader& shader, const tools::POSf& screen_pos, Tile::TileName tile_code)
         {
-            if(tile_code == WorldImageData::CroppedImageName::VOID)
+            if(tile_code == Tile::TileName::VOID)
                 return;
+            if(tile_code == Tile::TileName::WATER)
+                tile_code = static_cast<Tile::TileName>(tools::CASTi(Tile::TileName::WATER) + (wave/20)%8);
+
             const auto tex_pos = world_image_data[tile_code];
             const auto tex_size = world_image_data.size();
             
@@ -55,9 +60,10 @@ class PrintObject<World> : public PrintObjectInterface
                     const auto draw_pos = world_origin_in_screen + (tools::POSf(npos) * scaled_tile_size);
                     const auto tile_code = world[tools::POSs(npos)];
 
-                    shader.set_brightness(shader.get_brightness_by_height(world.get_height(npos), world.get_height(camera.get_target_pos())));
-                    print_tile(w, shader, draw_pos, tile_code);
+                    shader.set_brightness(shader.get_brightness_by_height(world[npos].height, world[camera.get_target_pos()].height));
+                    print_tile(w, shader, draw_pos, tile_code.name);
                 }
+            ++wave;
                 
             if(is_alive())
                 --life;

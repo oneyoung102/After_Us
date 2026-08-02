@@ -2,6 +2,7 @@
 
 #include <stdexcept>
 #include <tuple>
+#include <nlohmann/json.hpp>
 
 namespace tools
 {
@@ -116,6 +117,11 @@ namespace tools
             constexpr inline bool operator>=(Pos&& other) const { return this->x >= other.x && this->y >= other.y; }
 
             constexpr inline float square_size() const {return x*x+y*y;}
+
+            friend void to_json(nlohmann::json& j, const Pos& p) { j = nlohmann::json{{"x", p.x}, {"y", p.y}}; }
+            friend void from_json(const nlohmann::json& j, Pos& p) { j.at("x").get_to(p.x); j.at("y").get_to(p.y); }
+
+            NLOHMANN_DEFINE_TYPE_INTRUSIVE(Pos, x, y)
     };
 
     using POSs = Pos<size_t>;

@@ -38,7 +38,7 @@ bool MovingEntity::is_moveable_to(const World& world, const tools::POSf& pos)
     
     for(size_t r = start.r ; r <= end.r ; r++)
         for(size_t c = start.c ; c <= end.c ; c++)
-            if(abs(world.get_height(pos)-world.get_height({c,r})) > ascendable_height)
+            if(abs(world[pos].height-world[{c,r}].height) > ascendable_height)
                 return false;
     return true;
 }

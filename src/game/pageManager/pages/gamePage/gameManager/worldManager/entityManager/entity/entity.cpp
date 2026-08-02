@@ -26,7 +26,7 @@ bool Entity::is_collided(const Entity& entity, const World& world) const
 {
     if(*this == entity)
         return false;
-    if(world.get_height(this->get_pos()) != world.get_height(entity.get_pos()))
+    if(world[this->get_pos()].height != world[entity.get_pos()].height)
         return false;
     const auto hitbox1 = this->get_hitbox()/2.0;
     const auto hitbox2 = entity.get_hitbox()/2.0;

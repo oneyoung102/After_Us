@@ -9,11 +9,18 @@ class WorldManager
     private :
         constexpr static int ONE_DAY = 60*60*24;
         tools::Tick time;
+        tools::Tick tick;
+
         World world;
         EntityManager entity_manager;
         Camera camera;
+
+        void spend_time();
     public :
         WorldManager(tools::Tick time, Camera&& camera);
+        ~WorldManager();
+
+        const tools::Tick& get_time() const;
 
         const World& get_world() const;
         World& get_world();

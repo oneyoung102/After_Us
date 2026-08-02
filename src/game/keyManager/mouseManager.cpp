@@ -29,7 +29,7 @@ void MouseManager::anchor_mouse(const WindowManager& window_manager, const Camer
     float dist = sqrt(diff.square_size());
     float reach = player.get_reach();
     
-    if (dist > reach)
+    if(dist > reach)
     {
         world_pos = anchor_pos + diff * (reach / dist);
         tools::POSf screen_pos = WindowManager::world_pos_to_pixel_pos(world_pos, camera);

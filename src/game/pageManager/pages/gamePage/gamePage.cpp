@@ -18,7 +18,7 @@ GamePage::GamePage(const FileManager& file_manager)
     auto& camera = world_manager.get_camera();
     auto& entity_manager = world_manager.get_entity_manager();
 
-    entity_manager.register_entity(std::make_unique<Player>(tools::POSf(1,1)));
+    entity_manager.register_entity(std::make_unique<Player>(tools::POSf(20,20)));
 
     entity_manager.allot_player_keys(keyboard_manager);//키보드 메니져에 메핑 만들고 그 클래스에 위임
     mouse_manager.allot_key(sf::Mouse::Button::Left, [this, &entity_manager](){
@@ -39,9 +39,18 @@ GamePage::GamePage(const FileManager& file_manager)
     });
     camera.target(entity_manager.get_player_ptr());
 
-    entity_manager.register_entity(std::make_unique<FallenItem>(tools::POSf(1.4,2.5), FallenItem::ItemName::apple));
-    entity_manager.register_entity(std::make_unique<FallenItem>(tools::POSf(2.3,1.25), FallenItem::ItemName::apple));
-    entity_manager.register_entity(std::make_unique<FallenItem>(tools::POSf(2.5,1.5), FallenItem::ItemName::apple));
+    entity_manager.register_entity(std::make_unique<FallenItem>(tools::POSf(21.4,22.5), FallenItem::ItemName::apple));
+    entity_manager.register_entity(std::make_unique<FallenItem>(tools::POSf(22.3,21.25), FallenItem::ItemName::apple));
+    entity_manager.register_entity(std::make_unique<FallenItem>(tools::POSf(22.5,21.5), FallenItem::ItemName::apple));
+
+    entity_manager.register_entity(std::make_unique<Tree>(tools::POSf(22,22), 1.0, Tree::TreeName::TREE1));
+    entity_manager.register_entity(std::make_unique<Tree>(tools::POSf(27,22), 1.0, Tree::TreeName::TREE2));
+    entity_manager.register_entity(std::make_unique<Tree>(tools::POSf(32,22), 1.0, Tree::TreeName::TREE3));
+    entity_manager.register_entity(std::make_unique<Tree>(tools::POSf(37,22), 1.0, Tree::TreeName::TREE4));
+    entity_manager.register_entity(std::make_unique<Tree>(tools::POSf(42,22), 1.0, Tree::TreeName::TREE5));
+    entity_manager.register_entity(std::make_unique<Tree>(tools::POSf(47,22), 1.0, Tree::TreeName::TREE6));
+    entity_manager.register_entity(std::make_unique<Tree>(tools::POSf(52,22), 1.0, Tree::TreeName::TREE7));
+
 }
 
 PageSignal GamePage::proceed_page(FileManager& file_manager, WindowManager& window_manager)

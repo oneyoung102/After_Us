@@ -40,6 +40,7 @@
                 "src/game/pageManager/pages/gamePage/gameManager/worldManager/entityManager/entity/entities/creature/player/player.cpp",
                 "src/game/pageManager/pages/gamePage/gameManager/worldManager/entityManager/entity/entities/fallenItem/fallenItem.cpp",
                 "src/game/pageManager/pages/gamePage/gameManager/worldManager/entityManager/entity/entities/thing/thing.cpp",
+                "src/game/pageManager/pages/gamePage/gameManager/worldManager/entityManager/entity/entities/thing/tree.cpp",
                 "src/game/pageManager/pages/gamePage/gameManager/worldManager/entityManager/entity/entities/camera/camera.cpp",
                 "src/game/pageManager/pages/gamePage/gameManager/worldManager/entityManager/entityManager.cpp",
                 "src/game/pageManager/pages/gamePage/gameManager/worldManager/entityManager/chunk/chunk.cpp",

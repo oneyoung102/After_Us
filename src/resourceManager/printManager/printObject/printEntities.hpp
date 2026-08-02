@@ -2,6 +2,7 @@
 
 #include "game/pageManager/pages/gamePage/gameManager/worldManager/entityManager/entity/entities/creature/creature.hpp"
 #include "game/pageManager/pages/gamePage/gameManager/worldManager/entityManager/entity/entities/fallenItem/fallenItem.hpp"
+#include "game/pageManager/pages/gamePage/gameManager/worldManager/entityManager/entity/entities/thing/tree.hpp"
 #include "game/pageManager/pages/gamePage/gameManager/worldManager/worldManager.hpp"
 
 #include "main/windowManager/windowManager.hpp"
@@ -23,10 +24,21 @@ class PrintObject<Entity> : public PrintObjectInterface
         const EntityManager& entity_manager;
         std::vector<sf::Sprite> entity_sprites;
         
+        inline tools::POSi get_tex_pos(const Entity& entity, const ImageDatas::IMAGE_DATA& image_data)
+        {
+            if (auto creature = dynamic_cast<const Creature*>(&entity))
+                return image_data[creature->get_moving_state()];
+            else if (auto item = dynamic_cast<const FallenItem*>(&entity))
+                return image_data[item->get_item_name()];
+            else if (auto tree = dynamic_cast<const Tree*>(&entity))
+                return image_data[tree->get_tree_name()];
+
+            return {0, 0};
+        }
         
         void print_entity(sf::RenderWindow& w, Shader& shader, const tools::POSf& screen_pos, const Entity& entity)
         {
-            shader.set_brightness(shader.get_brightness_by_height(world.get_height(entity.get_pos()), world.get_height(camera.get_target_pos())));
+            shader.set_brightness(shader.get_brightness_by_height(world[entity.get_pos()].height, world[camera.get_target_pos()].height));
             
             const auto& image_data = image_datas[entity.get_name()];
             const auto tex_size = image_data.size();
@@ -37,20 +49,9 @@ class PrintObject<Entity> : public PrintObjectInterface
 
             sprite.setOrigin({tex_size.x / 2.f, tools::CASTf(tex_size.y)}); 
 
-            if(auto creature = dynamic_cast<const Creature*>(&entity))
-            {
-                const auto tex_pos = image_data[creature->get_moving_state()];
-                sprite.setTextureRect(sf::IntRect({tex_pos.x, tex_pos.y}, {tex_size.x, tex_size.y}));
-            }
-            else if(auto item = dynamic_cast<const FallenItem*>(&entity))
-            {
-                const auto tex_pos = image_data[item->get_item_name()];
-                sprite.setTextureRect(sf::IntRect({tex_pos.x, tex_pos.y}, {tex_size.x, tex_size.y}));       
-            }
-            else
-            {
+            const auto tex_pos = get_tex_pos(entity, image_data);
+            sprite.setTextureRect(sf::IntRect({tex_pos.x, tex_pos.y}, {tex_size.x, tex_size.y}));
 
-            }
             print_sprite(w,sprite,screen_pos,shader);
         }
         
@@ -73,33 +74,26 @@ class PrintObject<Entity> : public PrintObjectInterface
 
             for (size_t r = start_chunk.r; r < end_chunk.r; ++r)
             {
+                std::vector<std::shared_ptr<const Entity>> entity_queue;
                 for (size_t c = start_chunk.c; c < end_chunk.c; ++c)
                 {
-                    auto& chunk = entity_manager.get_chunk({c, r});
-
-                    int static_idx = 0, dynamic_idx = 0;
+                    const auto& chunk = entity_manager.get_chunk({c, r});
                     const int static_size = chunk.get_static_entities_size();
+                    for(size_t i = 0; i < static_size; ++i)
+                        entity_queue.push_back(chunk.get_static_entity_ptr(i));
                     const int dynamic_size = chunk.get_dynamic_entities_size();
-
-                    while(static_idx < static_size || dynamic_idx < dynamic_size)
-                        if(static_idx < static_size && (dynamic_idx >= dynamic_size || chunk.get_static_entity(static_idx).get_pos().y < chunk.get_dynamic_entity(dynamic_idx).get_pos().y))
-                        {
-                            const auto& static_entity = chunk.get_static_entity(static_idx);
-                            const auto static_pos = static_entity.get_pos();
-                            if(start <= static_pos && static_pos < end)
-                                print_entity(w, shader, WindowManager::world_pos_to_pixel_pos(static_pos, camera), static_entity);
-                            ++static_idx;
-                        }
-                        else
-                        {
-                            const auto& dynamic_entity = chunk.get_dynamic_entity(dynamic_idx);
-                            const auto dynamic_pos = dynamic_entity.get_pos();
-                            if(start <= dynamic_pos && dynamic_pos < end)
-                                print_entity(w, shader, WindowManager::world_pos_to_pixel_pos(dynamic_pos, camera), dynamic_entity);
-                            ++dynamic_idx;
-                        }
+                    for(size_t i = 0; i < dynamic_size; ++i)
+                        entity_queue.push_back(chunk.get_dynamic_entity_ptr(i));
+                    
+                    
                 }
+                std::sort(entity_queue.begin(), entity_queue.end(), [](const auto& a, const auto& b){
+                        return a->get_pos().y < b->get_pos().y;
+                    });
+                for(const auto& entity : entity_queue)
+                    print_entity(w, shader, WindowManager::world_pos_to_pixel_pos(entity->get_pos(), camera), *entity);
             }
+            
             if(is_alive())
                 --life;
         }
