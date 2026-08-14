@@ -1,5 +1,7 @@
 #pragma once
 
+#include <nlohmann/json.hpp>
+
 namespace tools
 {
     class Tick
@@ -66,5 +68,6 @@ namespace tools
             static float to_second(int value){return (float)value/FRAMERATE;}
             float to_second() const {return (float)tick/FRAMERATE;}
             
+            NLOHMANN_DEFINE_TYPE_INTRUSIVE(Tick, tick)
     };
 }

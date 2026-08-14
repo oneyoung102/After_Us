@@ -19,7 +19,7 @@ class Player : public Creature
         HAND_ACTION_TYPE __main_hand_action, __off_hand_action;
         float reach;
     public:
-        Player(const tools::POSf& pos);
+        Player(const tools::POSf& pos = tools::POSf());
 
         void set_reach(float reach);
         float get_reach() const;
@@ -35,4 +35,6 @@ class Player : public Creature
         
         
         virtual EntityName get_name() const override {return EntityName::player;}    
+
+        NLOHMANN_DEFINE_TYPE_INTRUSIVE(Player, pos, size, entity_code, motion, ascendable_height, direction, max_health, health, power, time_for_attack, attack_distance, notice_distance, foot_state, reach);
 };

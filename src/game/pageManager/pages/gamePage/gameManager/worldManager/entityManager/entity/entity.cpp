@@ -40,3 +40,73 @@ bool Entity::is_collided(const Entity& entity, const World& world) const
         return false;
     return true;
 }
+
+#include "game/pageManager/pages/gamePage/gameManager/worldManager/entityManager/entity/entities/creature/player/player.hpp"
+#include "game/pageManager/pages/gamePage/gameManager/worldManager/entityManager/entity/entities/thing/tree.hpp"
+#include "game/pageManager/pages/gamePage/gameManager/worldManager/entityManager/entity/entities/fallenItem/fallenItem.hpp"
+#include "game/pageManager/pages/gamePage/gameManager/worldManager/entityManager/entity/entities/camera/camera.hpp"
+
+void to_json(nlohmann::json& j, const std::shared_ptr<Entity>& entity)
+{
+    if (!entity) {
+        j = nullptr;
+        return;
+    }
+    j["name"] = entity->get_name();
+    switch (entity->get_name())
+    {
+        case Entity::EntityName::player:
+            j["data"] = *std::dynamic_pointer_cast<Player>(entity);
+            break;
+        case Entity::EntityName::tree:
+            j["data"] = *std::dynamic_pointer_cast<Tree>(entity);
+            break;
+        case Entity::EntityName::fallen_item:
+            j["data"] = *std::dynamic_pointer_cast<FallenItem>(entity);
+            break;
+        case Entity::EntityName::camera:
+            j["data"] = *std::dynamic_pointer_cast<Camera>(entity);
+            break;
+        default:
+            break;
+    }
+}
+
+void from_json(const nlohmann::json& j, std::shared_ptr<Entity>& entity)
+{
+    if (j.is_null()) {
+        entity = nullptr;
+        return;
+    }
+    Entity::EntityName name = j.at("name").get<Entity::EntityName>();
+    switch (name)
+    {
+        case Entity::EntityName::player: {
+            auto p = std::make_shared<Player>();
+            j.at("data").get_to(*p);
+            entity = p;
+            break;
+        }
+        case Entity::EntityName::tree: {
+            auto t = std::make_shared<Tree>();
+            j.at("data").get_to(*t);
+            entity = t;
+            break;
+        }
+        case Entity::EntityName::fallen_item: {
+            auto f = std::make_shared<FallenItem>();
+            j.at("data").get_to(*f);
+            entity = f;
+            break;
+        }
+        case Entity::EntityName::camera: {
+            auto c = std::make_shared<Camera>();
+            j.at("data").get_to(*c);
+            entity = c;
+            break;
+        }
+        default:
+            entity = nullptr;
+            break;
+    }
+}

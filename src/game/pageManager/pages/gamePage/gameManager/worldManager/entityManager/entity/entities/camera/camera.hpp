@@ -45,4 +45,6 @@ class Camera : public MovingEntity
         {
             MovingEntity::update(window_manager, world_manager);
         }
+
+        NLOHMANN_DEFINE_TYPE_INTRUSIVE(Camera, pos, size, entity_code, motion, ascendable_height, direction, altitude);
 };

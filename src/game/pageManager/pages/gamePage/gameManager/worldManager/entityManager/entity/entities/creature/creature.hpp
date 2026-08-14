@@ -9,7 +9,23 @@ class WorldManager;
 
 class Creature : public MovingEntity
 {
-    private :
+    public :
+        enum class FootState
+        {
+            stop,
+            left_foot,
+            right_foot,
+            COUNT
+        };
+        enum class MovingState
+        {
+            DOWN_1, DOWN_2, DOWN_3,
+            UP_1, UP_2, UP_3,
+            RIGHT_1, RIGHT_2, RIGHT_3,
+            LEFT_1, LEFT_2, LEFT_3,
+            COUNT
+        };
+    protected :
         int max_health, health;
 
         int power;
@@ -19,36 +35,21 @@ class Creature : public MovingEntity
 
         float notice_distance;
         
-        enum class FootState
-        {
-            stop,
-            left_foot,
-            right_foot,
-            COUNT
-        };
         FootState foot_state;
         
     public :
-        Creature(const tools::POSf& pos,
-            float size,
-            float speed,
-            unsigned int ascendable_height,
-            int max_health,
-            int health,
-            int power,
-            tools::Tick attack_speed,
-            float attack_distance,
-            float notice_distance);
+        Creature(const tools::POSf& pos = tools::POSf(),
+            float size = 1.f,
+            float speed = 0.015f,
+            unsigned int ascendable_height = 1,
+            int max_health = 100,
+            int health = 100,
+            int power = 10,
+            tools::Tick attack_speed = 10,
+            float attack_distance = 1.f,
+            float notice_distance = 5.f);
         virtual ~Creature() = default;
         
-        enum class MovingState
-        {
-            DOWN_1, DOWN_2, DOWN_3,
-            UP_1, UP_2, UP_3,
-            RIGHT_1, RIGHT_2, RIGHT_3,
-            LEFT_1, LEFT_2, LEFT_3,
-            COUNT
-        };
         MovingState get_moving_state() const;
 
         bool is_alive() const;
@@ -80,4 +81,8 @@ class Creature : public MovingEntity
 
         virtual bool is_creature() const override {return true;}
         virtual void update(const WindowManager& window_manager, const WorldManager& world_manager) override;
+
+        NLOHMANN_DEFINE_TYPE_INTRUSIVE(Creature, pos, size, entity_code, motion, ascendable_height, direction, max_health, health, power, time_for_attack, attack_distance, notice_distance);
 };
+
+

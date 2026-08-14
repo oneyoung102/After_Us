@@ -3,6 +3,7 @@
 #include "game/pageManager/pages/gamePage/gameManager/worldManager/entityManager/entity/entities/creature/creature.hpp"
 #include "game/pageManager/pages/gamePage/gameManager/worldManager/entityManager/entity/entities/fallenItem/fallenItem.hpp"
 #include "game/pageManager/pages/gamePage/gameManager/worldManager/entityManager/entity/entities/thing/tree.hpp"
+#include "game/pageManager/pages/gamePage/gameManager/worldManager/entityManager/entity/entities/thing/bush.hpp"
 #include "game/pageManager/pages/gamePage/gameManager/worldManager/entityManager/entity/entity.hpp"
 #include "imageData.hpp"
 #include <tuple>
@@ -15,6 +16,7 @@ class PlayerImageData;
 class PointerImageData;
 class ItemImageData;
 class TreesImageData;
+class BushesImageData;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -28,7 +30,8 @@ class ImageDatas
             PlayerImageData,
             PointerImageData,
             ItemImageData,
-            TreesImageData
+            TreesImageData,
+            BushesImageData
         >;
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // 3rd 여기에 이미지 명 추가 (반드시 이미지 파일 순서와 맞게)
@@ -39,6 +42,7 @@ class ImageDatas
             pointer,
             item,
             trees,
+            bushes,
             COUNT
         };
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -95,6 +99,9 @@ class ImageDatas
                     break;
                 case Entity::EntityName::tree:
                     image = Name::trees;
+                    break;
+                case Entity::EntityName::bush:
+                    image = Name::bushes;
                     break;
                 default:
                     throw std::runtime_error("Your EntityName was not mapped to image name");
@@ -220,6 +227,21 @@ class TreesImageData : public ImageData
             add_cropped_image_data(CroppedImageName::TREE7, {6,0});
         }  
         static constexpr ImageDatas::Name name = ImageDatas::Name::trees;
+};
+
+class BushesImageData : public ImageData
+{
+    public :
+        static constexpr ImageSize BUSH_SIZE = {256,192};
+        using CroppedImageName = Bush::BushName;
+
+        BushesImageData(sf::Texture&& texture)
+            : ImageData(std::move(texture),BUSH_SIZE)
+        {
+            add_cropped_image_data(CroppedImageName::BUSH1, {0,0});
+            add_cropped_image_data(CroppedImageName::BUSH2, {1,0});
+        }  
+        static constexpr ImageDatas::Name name = ImageDatas::Name::bushes;
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////

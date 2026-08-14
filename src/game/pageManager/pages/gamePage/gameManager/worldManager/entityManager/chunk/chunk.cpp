@@ -15,12 +15,15 @@ size_t Chunk::get_dynamic_entities_size() const {return dynamic_entities.size();
 
 void Chunk::insert(std::shared_ptr<Entity> entity)
 {
+    if(!entity) return;
+
     auto* entities = &static_entities;
     if(entity->is_dynamic_entity())
         entities = &dynamic_entities;
 
     auto pos = entity->get_pos();
     auto it = std::lower_bound(entities->begin(), entities->end(), pos.y, [](const std::shared_ptr<Entity>& a, float val){
+        if(!a) return true;
         return a->get_pos().y < val;
     });
     entities->insert(it, std::move(entity));

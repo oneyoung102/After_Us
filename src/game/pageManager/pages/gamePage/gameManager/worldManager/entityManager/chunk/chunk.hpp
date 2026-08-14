@@ -36,4 +36,6 @@ class Chunk
         std::shared_ptr<Entity> find_dynamic_entity(const std::function<bool(const Entity&, const Entity&)>& condition);
         std::vector<std::shared_ptr<Entity>> find_static_entities(const std::function<bool(const Entity&)>& condition);
         std::vector<std::shared_ptr<Entity>> find_dynamic_entities(const std::function<bool(const Entity&)>& condition);
+
+        NLOHMANN_DEFINE_TYPE_INTRUSIVE(Chunk, static_entities, dynamic_entities);
 };

@@ -30,8 +30,13 @@ class PrintObject<Entity> : public PrintObjectInterface
                 return image_data[creature->get_moving_state()];
             else if (auto item = dynamic_cast<const FallenItem*>(&entity))
                 return image_data[item->get_item_name()];
-            else if (auto tree = dynamic_cast<const Tree*>(&entity))
-                return image_data[tree->get_tree_name()];
+            else if (auto thing = dynamic_cast<const Thing*>(&entity))
+            {
+                if (auto tree = dynamic_cast<const Tree*>(thing))
+                    return image_data[tree->get_tree_name()];
+                else if (auto bush = dynamic_cast<const Bush*>(thing))
+                    return image_data[bush->get_bush_name()];
+            }
 
             return {0, 0};
         }
@@ -88,10 +93,15 @@ class PrintObject<Entity> : public PrintObjectInterface
                     
                 }
                 std::sort(entity_queue.begin(), entity_queue.end(), [](const auto& a, const auto& b){
+                        if(!a) return true;
+                        if(!b) return false;
                         return a->get_pos().y < b->get_pos().y;
                     });
                 for(const auto& entity : entity_queue)
+                {
+                    if(!entity) continue;
                     print_entity(w, shader, WindowManager::world_pos_to_pixel_pos(entity->get_pos(), camera), *entity);
+                }
             }
             
             if(is_alive())

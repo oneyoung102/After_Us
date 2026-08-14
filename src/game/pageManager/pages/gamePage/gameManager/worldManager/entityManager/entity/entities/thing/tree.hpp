@@ -41,7 +41,7 @@ class Tree : public Thing
         };
 
     public :
-        Tree(const tools::POSf& pos, float size = 1.0, TreeName tree_name = TreeName::TREE1);
+        Tree(const tools::POSf& pos = tools::POSf(), float size = 1.0, TreeName tree_name = TreeName::TREE1);
         ~Tree() override = default;
 
         void update(const WindowManager& window_manager, const WorldManager& world_manager) override {}
@@ -52,4 +52,17 @@ class Tree : public Thing
         TreeName get_tree_name() const {return tree_name;}  
 
         Entity::EntityName get_name() const override {return Entity::EntityName::tree;}  
+
+        NLOHMANN_DEFINE_TYPE_INTRUSIVE(Tree, pos, size, entity_code, tree_name);
 };
+
+NLOHMANN_JSON_SERIALIZE_ENUM(Tree::TreeName, {
+    {Tree::TreeName::TREE1, "TREE1"},
+    {Tree::TreeName::TREE2, "TREE2"},
+    {Tree::TreeName::TREE3, "TREE3"},
+    {Tree::TreeName::TREE4, "TREE4"},
+    {Tree::TreeName::TREE5, "TREE5"},
+    {Tree::TreeName::TREE6, "TREE6"},
+    {Tree::TreeName::TREE7, "TREE7"},
+    {Tree::TreeName::COUNT, "COUNT"}
+})

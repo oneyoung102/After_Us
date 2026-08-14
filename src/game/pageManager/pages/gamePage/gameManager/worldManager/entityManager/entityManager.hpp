@@ -25,8 +25,12 @@ class EntityManager
         CHUNCKS_TYPE chunks;
 
     public:
+        EntityManager() = default;
         EntityManager(const World& world, std::vector<std::unique_ptr<Entity>>&& entities = {});
         
+        void rebind_player();
+        void purge_null_entities();
+
         static inline tools::POSs get_chunk_pos(tools::POSf&& pos) {return tools::POSs(pos) / Chunk::CHUNK_SIZE;}
         static inline tools::POSs get_chunk_pos(const tools::POSf& pos) {return tools::POSs(pos) / Chunk::CHUNK_SIZE;}
         static inline tools::POSs get_chunk_pos(const std::shared_ptr<const Entity>& entity) {return tools::POSs(entity->get_pos()) / Chunk::CHUNK_SIZE;}
@@ -54,8 +58,16 @@ class EntityManager
 
         void allot_player_keys(KeyboardManager& keyboard_Manager);
 
+        bool has_player() const { return !player.expired(); }
+        void generate_initial_entities(const World& world);
+
         Player& get_player();
         const Player& get_player() const;
         std::shared_ptr<Player> get_player_ptr();
         std::shared_ptr<const Player> get_player_ptr() const;
+
+
+
+        NLOHMANN_DEFINE_TYPE_INTRUSIVE(EntityManager, available_entity_code, chunks);
 };
+

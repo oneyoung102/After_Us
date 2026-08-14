@@ -18,6 +18,7 @@ class Entity
             pointer,
             fallen_item,
             tree,
+            bush,
             COUNT
         };
     protected :
@@ -25,7 +26,7 @@ class Entity
         float size;
         ENTITY_CODE entity_code;
     public :
-        Entity(const tools::POSf& pos, float size = 1.0);
+        Entity(const tools::POSf& pos = tools::POSf(), float size = 1.0);
         virtual ~Entity() = default;
 
         virtual void update(const WindowManager& window_manager, const WorldManager& world_manager) {}
@@ -57,5 +58,20 @@ class Entity
 
         bool is_dynamic_entity() const {return is_interactable_entity() || is_moving_entity();}
         bool is_static_entity() const {return !is_dynamic_entity();}
+
+        NLOHMANN_DEFINE_TYPE_INTRUSIVE(Entity, pos, size, entity_code);
 };
+
+
+NLOHMANN_JSON_SERIALIZE_ENUM(Entity::EntityName, {
+    {Entity::EntityName::camera, "camera"},
+    {Entity::EntityName::player, "player"},
+    {Entity::EntityName::pointer, "pointer"},
+    {Entity::EntityName::fallen_item, "fallen_item"},
+    {Entity::EntityName::tree, "tree"},
+    {Entity::EntityName::bush, "bush"}
+})
+
+void to_json(nlohmann::json& j, const std::shared_ptr<Entity>& entity);
+void from_json(const nlohmann::json& j, std::shared_ptr<Entity>& entity);
 

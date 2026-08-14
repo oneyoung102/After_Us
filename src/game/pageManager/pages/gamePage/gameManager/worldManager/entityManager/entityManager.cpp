@@ -2,12 +2,16 @@
 #include "game/keyManager/keyboardManager.hpp"
 #include "game/pageManager/pages/gamePage/gameManager/worldManager/entityManager/entity/entities/camera/camera.hpp"
 #include "game/pageManager/pages/gamePage/gameManager/worldManager/entityManager/entity/entities/fallenItem/fallenItem.hpp"
+#include "game/pageManager/pages/gamePage/gameManager/worldManager/entityManager/entity/entities/thing/tree.hpp"
 #include "game/pageManager/pages/gamePage/gameManager/worldManager/entityManager/entity/interactableEntity/interactableEntity.hpp"
 #include "game/pageManager/pages/gamePage/gameManager/worldManager/worldManager.hpp"
 #include "main/windowManager/windowManager.hpp"
 #include "tools/cast.hpp"
 #include "tools/pos.hpp"
 #include <memory>
+#include <random>
+#include <cmath>
+
 
 EntityManager::EntityManager(const World& world, std::vector<std::unique_ptr<Entity>>&& entities)
     : chunks(
@@ -41,6 +45,10 @@ bool EntityManager::is_valid_chunk(const tools::POSi& chunk_pos) const
 
 void EntityManager::register_entity(std::shared_ptr<Entity> entity)
 {
+    if(auto p = std::dynamic_pointer_cast<Player>(entity))
+        if(player.lock())
+            throw std::runtime_error("only one player can exist");
+        
     if(entity->is_registered())
         throw std::runtime_error("entity is already registered");
     entity->set_entity_code(++available_entity_code);
@@ -213,4 +221,140 @@ Player& EntityManager::get_player() {return *player.lock();}
 const Player& EntityManager::get_player() const {return *player.lock();}
 std::shared_ptr<Player> EntityManager::get_player_ptr(){return player.lock();}
 std::shared_ptr<const Player> EntityManager::get_player_ptr() const{return player.lock();}
+
+void EntityManager::rebind_player()
+{
+    player.reset();
+    for (auto& row : chunks)
+        for (auto& chunk : row)
+            for (size_t i = 0; i < chunk.get_dynamic_entities_size(); ++i)
+                if (auto p = std::dynamic_pointer_cast<Player>(chunk.get_dynamic_entity_ptr(i)))
+                {
+                    player = p;
+                    return;
+                }
+}
+
+void EntityManager::generate_initial_entities(const World& world)
+{
+    if (player.lock())
+        return;
+
+    tools::POSs world_size = world.get_size();
+    if (world_size.c == 0 || world_size.r == 0)
+        return;
+
+    tools::POSf center(world_size.c / 2.0f, world_size.r / 2.0f);
+
+    // 1. 플레이어 위치: 섬 중앙부 근처의 잔디(GRASS) 타일 탐색
+    tools::POSf player_pos = center;
+    bool found_grass = false;
+    for (int radius = 0; radius < (int)std::max(world_size.c, world_size.r) && !found_grass; ++radius)
+    {
+        for (int dr = -radius; dr <= radius && !found_grass; ++dr)
+        {
+            for (int dc = -radius; dc <= radius && !found_grass; ++dc)
+            {
+                int r = (int)center.y + dr;
+                int c = (int)center.x + dc;
+                if (r >= 0 && r < (int)world_size.r && c >= 0 && c < (int)world_size.c)
+                {
+                    if (world[tools::POSs(c, r)].name == Tile::TileName::GRASS)
+                    {
+                        player_pos = tools::POSf(c + 0.5f, r + 0.5f);
+                        found_grass = true;
+                    }
+                }
+            }
+        }
+    }
+
+    register_entity(std::make_shared<Player>(player_pos));
+
+    // 2. 맵 전체 잔디(GRASS) 타일 위치에 나무 자동 생성
+    std::mt19937 rng(42);
+    std::uniform_real_distribution<float> offset_dist(-0.35f, 0.35f);
+    std::uniform_real_distribution<float> prob_dist(0.0f, 1.0f);
+
+    std::vector<tools::POSf> tree_positions;
+    const float STEP = 3.5f;
+
+    for (float r = 1.5f; r < (float)world_size.r - 1.5f; r += STEP)
+    {
+        for (float c = 1.5f; c < (float)world_size.c - 1.5f; c += STEP)
+        {
+            float tile_c = c + offset_dist(rng);
+            float tile_r = r + offset_dist(rng);
+            tools::POSs grid_pos((size_t)tile_c, (size_t)tile_r);
+
+            if (grid_pos.c >= world_size.c || grid_pos.r >= world_size.r)
+                continue;
+
+            // 잔디 타일 위에서만 생성
+            if (world[grid_pos].name != Tile::TileName::GRASS)
+                continue;
+
+            tools::POSf pos(tile_c, tile_r);
+
+            // 플레이어 주변 스폰 방지 (최소 2.5 거리)
+            tools::POSf dplayer = pos - player_pos;
+            if (dplayer.square_size() < 6.25f)
+                continue;
+
+            // 기존 나무 간격 유지 (최소 2.0 거리)
+            bool too_close = false;
+            for (const auto& existing_pos : tree_positions)
+            {
+                tools::POSf dtree = pos - existing_pos;
+                if (dtree.square_size() < 4.0f)
+                {
+                    too_close = true;
+                    break;
+                }
+            }
+            if (too_close)
+                continue;
+
+            // 지역별 유사 나무 종류 배치 (중앙부는 TREE1, TREE2 / 외곽은 사방위별 TREE 종류 매핑)
+            tools::POSf dcenter = pos - center;
+            float dist_from_center = std::sqrt(dcenter.square_size());
+            float max_radius = std::min(world_size.c, world_size.r) * 0.5f;
+
+            Tree::TreeName tree_name = Tree::TreeName::TREE1;
+
+            if (dist_from_center < max_radius * 0.35f)
+            {
+                // 섬 중앙 영역: 비슷 계열 (TREE1, TREE2)
+                tree_name = (prob_dist(rng) < 0.6f) ? Tree::TreeName::TREE1 : Tree::TreeName::TREE2;
+            }
+            else
+            {
+                // 외곽 영역: 방위에 따라 비슷한 계열 묶음 지정
+                float angle = std::atan2(dcenter.y, dcenter.x);
+                if (angle < -1.57f)
+                    tree_name = (prob_dist(rng) < 0.7f) ? Tree::TreeName::TREE3 : Tree::TreeName::TREE4;
+                else if (angle < 0.0f)
+                    tree_name = (prob_dist(rng) < 0.7f) ? Tree::TreeName::TREE4 : Tree::TreeName::TREE5;
+                else if (angle < 1.57f)
+                    tree_name = (prob_dist(rng) < 0.7f) ? Tree::TreeName::TREE6 : Tree::TreeName::TREE5;
+                else
+                    tree_name = (prob_dist(rng) < 0.7f) ? Tree::TreeName::TREE7 : Tree::TreeName::TREE6;
+            }
+
+            if (prob_dist(rng) < 0.75f)
+            {
+                register_entity(std::make_shared<Tree>(pos, 1.0f, tree_name));
+                tree_positions.push_back(pos);
+
+                if (prob_dist(rng) < 0.15f)
+                {
+                    tools::POSf item_pos = pos + tools::POSf(offset_dist(rng), offset_dist(rng));
+                    register_entity(std::make_shared<FallenItem>(item_pos, FallenItem::ItemName::apple));
+                }
+            }
+        }
+    }
+}
+
+
 

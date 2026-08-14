@@ -11,15 +11,14 @@ class WorldManager;
 
 class MovingEntity : public Entity
 {
-    private :
-        AcceleratedMotion motion;
     protected :
+        AcceleratedMotion motion;
         static constexpr float DEFAULT_SPEED = 0.015;
         unsigned int ascendable_height;
 
         tools::Direction direction;
     public :
-        MovingEntity(const tools::POSf& pos, float size = 1.f, float speed = DEFAULT_SPEED, unsigned int ascendable_height = 1);
+        MovingEntity(const tools::POSf& pos = tools::POSf(), float size = 1.f, float speed = DEFAULT_SPEED, unsigned int ascendable_height = 1);
         virtual ~MovingEntity() = default;
 
         virtual void update(const WindowManager& window_manager, const WorldManager& world_manager) override;
@@ -42,4 +41,6 @@ class MovingEntity : public Entity
         tools::Direction get_direction() const;
 
         virtual bool is_moving_entity() const override {return true;}
+
+        NLOHMANN_DEFINE_TYPE_INTRUSIVE(MovingEntity, pos, size, entity_code, motion, ascendable_height, direction);
 };

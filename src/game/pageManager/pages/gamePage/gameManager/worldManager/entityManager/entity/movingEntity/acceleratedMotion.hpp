@@ -29,4 +29,6 @@ class AcceleratedMotion
 
         void set_speed(float speed);
         float get_speed() const;
+
+        NLOHMANN_DEFINE_TYPE_INTRUSIVE(AcceleratedMotion, speed, power);
 };

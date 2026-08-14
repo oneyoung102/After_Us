@@ -10,7 +10,7 @@ class InteractableEntity : public Entity
     protected :
         bool __is_interacted;
     public :
-        InteractableEntity(const tools::POSf& pos, float size = 1.f);
+        InteractableEntity(const tools::POSf& pos = tools::POSf(), float size = 1.f);
         virtual ~InteractableEntity() = default;
 
         virtual void update(const WindowManager& window_manager, const WorldManager& world_manager) override;
@@ -19,4 +19,6 @@ class InteractableEntity : public Entity
         void set_interacted_state(bool state);
 
         virtual bool is_interactable_entity() const override {return true;}
+
+        NLOHMANN_DEFINE_TYPE_INTRUSIVE(InteractableEntity, pos, size, entity_code, __is_interacted);
 };
