@@ -2,10 +2,10 @@
 #include "tools/json.hpp"
 
 
-WorldManager::WorldManager(tools::Tick time, Camera&& camera)
+WorldManager::WorldManager(tools::Tick time)
     : entity_manager(world)
-    , time(time), tick(0)
-    , camera(std::move(camera))
+    , time(time), time_counter(0)
+    , camera(Camera())
 {
     world = tools::load_from_json<World>("world.json");
     try
@@ -22,6 +22,7 @@ WorldManager::WorldManager(tools::Tick time, Camera&& camera)
 
     // JSON에 플레이어가 없으면 새로 생성 (has_player() 체크로 중복 방지) 임시임시임시임시임시임시임시임시
     entity_manager.generate_initial_entities(world);
+    camera.target(entity_manager.get_player_ptr());
 }
 
 WorldManager::~WorldManager()
@@ -33,10 +34,10 @@ WorldManager::~WorldManager()
 
 void WorldManager::spend_time()
 {
-    ++tick;
-    if(tick == 16)
+    ++time_counter;
+    if(time_counter == 16)
     {
-        tick = 0;
+        time_counter = 0;
         ++time;
         if(time == ONE_DAY)
             time = 0;

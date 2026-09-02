@@ -3,6 +3,7 @@
 #include "game/pageManager/pages/gamePage/gameManager/worldManager/entityManager/entity/entities/camera/camera.hpp"
 #include "game/pageManager/pages/gamePage/gameManager/worldManager/entityManager/entity/entities/fallenItem/fallenItem.hpp"
 #include "game/pageManager/pages/gamePage/gameManager/worldManager/entityManager/entity/entities/thing/tree.hpp"
+#include "game/pageManager/pages/gamePage/gameManager/worldManager/entityManager/entity/entities/thing/bush.hpp"
 #include "game/pageManager/pages/gamePage/gameManager/worldManager/entityManager/entity/interactableEntity/interactableEntity.hpp"
 #include "game/pageManager/pages/gamePage/gameManager/worldManager/worldManager.hpp"
 #include "main/windowManager/windowManager.hpp"
@@ -350,6 +351,37 @@ void EntityManager::generate_initial_entities(const World& world)
                 {
                     tools::POSf item_pos = pos + tools::POSf(offset_dist(rng), offset_dist(rng));
                     register_entity(std::make_shared<FallenItem>(item_pos, FallenItem::ItemName::apple));
+                }
+
+                // 나무 주변에 낮은 확률로 bush 생성 (30% 확률, 1~2개)
+                if (prob_dist(rng) < 0.30f)
+                {
+                    std::uniform_real_distribution<float> bush_angle_dist(0.0f, 6.2832f); // 0~2π
+                    std::uniform_real_distribution<float> bush_radius_dist(1.1f, 2.4f);
+                    int bush_count = (prob_dist(rng) < 0.4f) ? 2 : 1;
+                    for (int bi = 0; bi < bush_count; ++bi)
+                    {
+                        float angle = bush_angle_dist(rng);
+                        float radius = bush_radius_dist(rng);
+                        tools::POSf bush_pos = pos + tools::POSf(std::cos(angle) * radius, std::sin(angle) * radius);
+
+                        // 월드 경계 및 잔디 타일 체크
+                        tools::POSs bush_grid((size_t)bush_pos.x, (size_t)bush_pos.y);
+                        if (bush_grid.c >= world_size.c || bush_grid.r >= world_size.r)
+                            continue;
+                        if (world[bush_grid].name != Tile::TileName::GRASS)
+                            continue;
+
+                        // 플레이어 근처 스폰 방지
+                        tools::POSf dp = bush_pos - player_pos;
+                        if (dp.square_size() < 6.25f)
+                            continue;
+
+                        Bush::BushName bush_name = (prob_dist(rng) < 0.5f)
+                            ? Bush::BushName::BUSH1
+                            : Bush::BushName::BUSH2;
+                        register_entity(std::make_shared<Bush>(bush_pos, 1.0f, bush_name));
+                    }
                 }
             }
         }

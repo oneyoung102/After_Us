@@ -42,9 +42,10 @@ bool Entity::is_collided(const Entity& entity, const World& world) const
 }
 
 #include "game/pageManager/pages/gamePage/gameManager/worldManager/entityManager/entity/entities/creature/player/player.hpp"
-#include "game/pageManager/pages/gamePage/gameManager/worldManager/entityManager/entity/entities/thing/tree.hpp"
 #include "game/pageManager/pages/gamePage/gameManager/worldManager/entityManager/entity/entities/fallenItem/fallenItem.hpp"
 #include "game/pageManager/pages/gamePage/gameManager/worldManager/entityManager/entity/entities/camera/camera.hpp"
+#include "game/pageManager/pages/gamePage/gameManager/worldManager/entityManager/entity/entities/thing/tree.hpp"
+#include "game/pageManager/pages/gamePage/gameManager/worldManager/entityManager/entity/entities/thing/bush.hpp"
 
 void to_json(nlohmann::json& j, const std::shared_ptr<Entity>& entity)
 {
@@ -66,6 +67,9 @@ void to_json(nlohmann::json& j, const std::shared_ptr<Entity>& entity)
             break;
         case Entity::EntityName::camera:
             j["data"] = *std::dynamic_pointer_cast<Camera>(entity);
+            break;
+        case Entity::EntityName::bush:
+            j["data"] = *std::dynamic_pointer_cast<Bush>(entity);
             break;
         default:
             break;
@@ -103,6 +107,12 @@ void from_json(const nlohmann::json& j, std::shared_ptr<Entity>& entity)
             auto c = std::make_shared<Camera>();
             j.at("data").get_to(*c);
             entity = c;
+            break;
+        }
+        case Entity::EntityName::bush: {
+            auto b = std::make_shared<Bush>();
+            j.at("data").get_to(*b);
+            entity = b;
             break;
         }
         default:
